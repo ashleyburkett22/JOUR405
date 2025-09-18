@@ -9,6 +9,7 @@ In this assignment, we will be working with a dataset containing information abo
 You will need to load the tidyverse library
 
 ```{r}
+library(tidyverse)
 ```
 
 Then you'll load the data from the web. The URL for the data is: https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/biden_wh_salaries_2024.csv. You will create a dataframe called `wh_salaries` that contains the data from this URL.
@@ -16,19 +17,24 @@ Then you'll load the data from the web. The URL for the data is: https://raw.git
 ### Task 2: Load the Data and Describe It
 
 ```{r}
+wh_salaries <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/biden_wh_salaries_2024.csv")
 ```
 ### Task 3: Describe the Data
 
-You should examine that dataframe carefully by clicking on it in the Environment tab in RStudio. Write a couple of sentences describing the categories of incidents. From a reporting standpoint, what stands out to you about this data? Are there any salary values that will cause problems for analysis?
+##You should examine that dataframe carefully by clicking on it in the Environment tab in RStudio. Write a couple of sentences describing the categories of incidents. From a reporting standpoint, what stands out to you about this data? Are there any salary values that will cause problems for analysis?
 
-ANSWER HERE
+The dataframe shows the name of each personnel, their status as an employee/detailee, the salary, and job title. What stands out ot me in this data is that there are many employees with no salary, and the majority of the highest paid positions are all "special assistant to the president." The values that will cause problems for analysis are the salaries 
 
 ### Task 4: Calculate the Mean and Median of the Salaries
 
 Write code to calculate the mean and median of the salaries in the dataset using the `summarize()` function. You don't need to make a new dataframe, just display the results.
 
 ```{r}
-
+wh_salaries %>% 
+  summarize(
+    mean_salary = mean(salary, na.rm = TRUE),
+    median_salary = median(salary, na.rm = TRUE)
+  )
 ```
 
 ### Task 5: Add in the minimum and maximum salaries
@@ -36,17 +42,23 @@ Write code to calculate the mean and median of the salaries in the dataset using
 Take the code you just wrote and add in the minimum and maximum salaries (the functions for that are `min()` and `max()`). Your results should show four columns: mean_salary, median_salary, min_salary, max_salary.
 
 ```{r}
-
+wh_salaries %>% 
+  summarize(
+    mean_salary = mean(salary, na.rm = TRUE),
+    median_salary = median(salary, na.rm = TRUE),
+    max_salary = max(salary, na.rm = TRUE),
+    min_salary = min(salary, na.rm = TRUE)
+  )
 ```
 
 ### Task 6: Describe the Results
 
-Write a couple of sentences describing the results of your analysis. What do the mean and median salaries tell you about the data? What do the minimum and maximum salaries tell you? Are there any outliers in the data?
+#Write a couple of sentences describing the results of your analysis. What do the mean and median salaries tell you about the data? What do the minimum and maximum salaries tell you? Are there any outliers in the data?
 
-ANSWER HERE
+The results of my new datachart show the average (mean), median, minimum and maximum salaries. The average salary sits at $107,036.6, and the median is $110,500. The maximum salary is over double both of these numbers, at $251,258, while the minimum is at $0. The median and average show me that, in comparison to the maximum, there's a lot of mid-low level paid jobs at the White House, and very few high paid jobs. Outliers in the data include the minimum and maximums being drastically far apart, which sways the data. 
 
 ### Task 7: Story Idea
 
-Based on the data, what is your best story idea? What is the next step you would take to develop that story idea?
+#Based on the data, what is your best story idea? What is the next step you would take to develop that story idea?
 
-ANSWER HERE
+The story idea is that there's a large pay gap between the average pay and the highest paid White House employees, with a $144,222 gap between the two. There are also several unpaid employees, while there is still a small group of extremely high paid employees. Logically, their pay could be spread out, but it isn't. This would sound the alarm for a reader or employee about the pay heirarchy in the White House.  
