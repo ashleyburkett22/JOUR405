@@ -9,6 +9,8 @@ In this assignment, we will be working with a dataset of total crimes reported b
 You will need to load the tidyverse library and the janitor library
 
 ```{r}
+library(tidyverse)
+library(janitor)
 ```
 
 Then you'll load the data from the web. The URL for the data is: https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/md_cities_crime_2019_2020.csv. You will create a dataframe called `md_cities` that contains the data from this URL.
@@ -16,39 +18,61 @@ Then you'll load the data from the web. The URL for the data is: https://raw.git
 ### Task 2: Load the Data
 
 ```{r}
+md_cities <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/md_cities_crime_2019_2020.csv")
 ```
 ### Task 3: Calculating Rates
 
 Calculate violent and property crime rates for each city for both years using `mutate()`. You'll create four new columns: `violent_rate_2019`, `property_rate_2019`, `violent_rate_2020`, and `property_rate_2020`. You'll need to figure out the proper unit rate, given that there are varying populations. There's no perfect choice; choose the one that works best for you. Save the results to a new dataframe called `md_cities_rates`.
 
 ```{r}
+md_cities_rates <- md_cities |>
+  mutate(
+    violent_rate_2019 = violent2019 / pop2019 * 1000,
+    property_rate_2019 = property2019 / pop2019 * 1000,
+    violent_rate_2020 = violent2020 / pop2020 * 1000,
+    property_rate_2020 = property2020 / pop2020 * 1000
+  )
 ```
 
 ### Task 4: Describe the Rates
 
-Examine the new dataframe, `md_cities_rates`, by clicking on it in the Environment tab in RStudio and sorting by the rate columns. Write a couple of sentences about the results, comparing and contrasting the cities with the highest rates (both violent and property) in 2019 and 2020. Do you see any patterns? What does this tell you about crime in Maryland cities? What's the story here?
+#Examine the new dataframe, `md_cities_rates`, by clicking on it in the Environment tab in RStudio and sorting by the rate columns. Write a couple of sentences about the results, comparing and contrasting the cities with the highest rates (both violent and property) in 2019 and 2020. Do you see any patterns? What does this tell you about crime in Maryland cities? What's the story here?
 
-ANSWER HERE
+Highest Violent Rate 2019: Baltimore (Ocean City 2nd)
+Highest property Rate 2019: Ocean City
+Violent Rate 2020: Ocean City (Baltimore 2nd)
+Property Rate 2020: Ocean City
 
+The violent crime rates in 2019 and 2020 bounce beyween Baltimore and Ocean city having the most instances. The property crime rates in these years are both claimed by Ocean City having the highest rates. The pattern is that Ocean City and Baltimore have the highest rates between these two years. However, Baltimore's population is much higher than all the other cities in MD, which makes it more likely that more crime will occur. Ocean City's population is on the lower side, so it makes this city more unsafe when you look at the numbers. 
+
+The story is that Baltimore is percieved as being the most dangerous, but in 3/4 of the cases, Ocean City had higher crime rates.
 
 ### Task 5: Calculate Percentage Change
 
 Let's add two percentage change columns to your dataframe: one for violent crime rates and one for property crime rates. You'll calculate the percentage change between 2019 and 2020 for each city. Save the results to a new dataframe called `md_cities_change`.
 
 ```{r}
+md_cities_change <- md_cities_rates |> mutate(
+  violent_crime_percent_change = ((violent_rate_2020 - violent_rate_2019) / violent_rate_2019) *100,
+  property_crime_percent_change = ((property_rate_2020 - property_rate_2019) / property_rate_2019) * 100
+)
 ```
 
 ### Task 7: Describe Percentage Changes
 
-Look at the `md_cities_change` dataframe by clicking on it in the Environment tab in RStudio. Write a couple of sentences describing the percentage change results. What's more interesting here, the patterns or the outliers? What's the story in the data?
+#Look at the `md_cities_change` dataframe by clicking on it in the Environment tab in RStudio. Write a couple of sentences describing the percentage change results. What's more interesting here, the patterns or the outliers? What's the story in the data?
 
-ANSWER HERE
+The percent change results show how much crime has increased or decreased in different MD cities. The most interesting piece of data is that Edmonston in Prince George's County has a violent crime rate that's up over 800%. Crisfield of Somerset has the highest increase for property crimes. There are many data points that could not be calculated, since some years have data points of 0. 
+
+Despite the high numbers in Edmonston, this can be attributed to a small county experiencing a rise in crime. Compared to Baltimore in 2020, the county Edmonston only experience 10 violent crimes, while Baltimore had 9,402. The rates show how fast the onset of the crimes occured in an area, but the number of crimes still shows the highest/lowest occurrences. 
 
 ### Task 8: Tell the Best Story
 
-Write up a lede and nutgraf of a story with the _best_ story idea you've found in this assignment. The lede should be a single sentence that summarizes the most important information in the data. The nutgraf should be a paragraph that provides more context and explains why the data is important.
+#Write up a lede and nutgraf of a story with the _best_ story idea you've found in this assignment. The lede should be a single sentence that summarizes the most important information in the data. The nutgraf should be a paragraph that provides more context and explains why the data is important.
 
-ANSWER HERE
+Baltimore has the most crime Maryland, but fluctuations up and down throughout the state are frequent in many cities. 
+
+Baltimore had the highest violent and property crime instances in 2019 and 2020. Violent crimes reached 9,402 and 11,101, while property crimes reached 18,540 and 25,748. However, the rate of crime has actually lowered in Baltimore between these years. Other Maryland cities such as Edmonston have the highest violent percent change, reaching 895%. Crisfield, in Somerset county had an increase in property crimes by 320% as well. Montgomery County reaches some of the highest changes for violent and property crime during these years. Despite Baltimore having the most occurrences in crime, other Maryland cities also experience high fluctuations. 
 
 ### Task 9: Save Your Work and Put it on GitHub
 
