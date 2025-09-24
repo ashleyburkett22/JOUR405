@@ -1,0 +1,136 @@
+---
+title: "Data Distribution, Volleyball Percentiles, Car Thefts, "
+author: "Derek Willis /Rob Wells"
+date: 09-23-2025
+---
+
+This workbook contains three exercises for our class. Complete them and hand it in at the end of class via a GitHub link.
+
+Your name:
+**Answer**
+Ashley Burkett
+#------------------------------------------------------------------------------#
+
+
+# Part 1: When Data Isn't Normal
+
+Working in pairs, consider the following question: "Why do many statistical methods assume a normal distribution, and what challenges arise when data does not meet this assumption?"
+
+First, come up with two examples of data that might not be normally distributed - in other words, that could be skewed or unequal in some way - and explain why they wouldn't be normally distributed. Feel free to draw what you think the distribution would look like.
+
+Then, how should a reporter working on a story about data that isn't normally distributed describe that data? Which statistical measures that we've covered in class should they use or avoid when doing so? Use the examples you came up with, and you should discuss your answers together, but each student submits separately.
+
+**Your answer**:
+An example of data that might not come up normally distributed is lifespan over the past few hundred years. This may be skewed because people live longer now than they did in the 1900s because of modern medicine. This would be skewed to the right since people live longer. Another example could be test scores for a really hard test, that make more people score lower. The distribution would be more to the left htan middle. 
+
+A reporter working on a story where the data isn't normally distributed should state that, and explain why. The statistical measure that they should avoid is the average, because outliers skew the data. 
+
+#------------------------------------------------------------------------------#
+
+
+# Part 2: Volleyball Percentiles
+
+We'll be calculating percentiles to see how good Maryland was in service aces in the 2024 season. We'll use `mutate()` and a new function `ntile()` to calculate percentiles. Get started by loading the tidyverse in a code block, then load the CSV file here: https://raw.githubusercontent.com/dwillis/NCAAWomensVolleyballData/refs/heads/main/data/ncaa_womens_volleyball_matchstats_2024.csv" and save it to a dataframe called `matches`.
+
+### Task 1: Load the tidyverse
+
+```{r}
+library(tidyverse)
+```
+
+### Task 2: Load the data
+
+```{r}
+matches <- read_csv("https://raw.githubusercontent.com/dwillis/NCAAWomensVolleyballData/refs/heads/main/data/ncaa_womens_volleyball_matchstats_2024.csv")
+```
+
+### Task 3: Create totals of aces for each team using `group_by()` and `summarize()`
+
+```{r}
+team_aces <- matches |> 
+  group_by(team) |> 
+  summarize(total_aces = sum(aces)) |> 
+  arrange(desc(total_aces))
+```
+
+
+### Task 4: Calculate percentiles using `mutate()` and `ntile()`
+
+```{r}
+team_aces |> mutate(percentile = ntile(total_aces, 100))
+```
+
+
+### Task 5: Describe the percentiles
+
+Write a couple of sentences that puts Maryland into context with the other teams in the dataset. You can do some Internet research to help with this.
+
+**Answer**:
+
+Maryland is on the higher end of aces with 223, placing it in the 17th place, in the 95% percentile. Only 5% of teams scored better than Maryland. This means that Maryland has a large amount of aces in their games, compares to other teams This makes sense because Maryland volleyball is pretty good, and has a high record. Teams with a better record tend to be towards the higher end of this list. 
+
+#------------------------------------------------------------------------------#
+
+# Part 3: Car Thefts
+
+Follow along with the demo to learn how to calculate standard deviation and how to create a histogram of the data using R and the Tidyverse. Get started by loading the tidyverse in a new R block.
+
+### Task 1: Load the tidyverse
+
+```{r}
+library(tidyverse)
+```
+
+
+### Task 2: Load the car thefts dataset from https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/car_thefts_jan24.csv
+
+
+```{r}
+car_thefts <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/car_thefts_jan24.csv")
+```
+
+### Task 3: Calculate the standard deviation of the number of car thefts, along with the mean
+
+```{r}
+car_thefts |> summarize(mean = mean(count), sd = sd(count))
+```
+
+
+### Task 4: Create a histogram of the number of car thefts
+
+
+```{r}
+car_thefts |> 
+  ggplot() + 
+  geom_histogram(aes(x = count), binwidth = 2)
+```
+
+
+
+
+### Task 5: Add a line to the histogram that shows the mean of the number of car thefts, and two other lines to show one standard deviation in both directions
+
+```{r}
+car_thefts |> 
+  ggplot() + 
+  geom_histogram(aes(x = count), binwidth = 2) +
+  geom_vline(aes(xintercept = mean(count)), color = "red", linetype = "dashed", size = 1) +
+  geom_vline(aes(xintercept = mean(count) - sd(count)), color = "blue", linetype = "dashed", size = 1) +
+  geom_vline(aes(xintercept = mean(count) + sd(count)), color = "blue", linetype = "dashed", size = 1)
+```
+
+### Task 6: Describe your results
+
+Is the distribution normal or skewed in one direction? Write a sentence in which you describe the range of the data covered by one standard deviation from the mean on both sides - how much of the data falls in that range?
+
+
+**Answer**:
+The distribution is skewed to the right. The mean is 13 car thefts per month. The range of data to the left of the mean shows that about 10 incidents happen per month. The range of data to the right of the mean shows that 15 incidents happen per month. 2/3 of the data occurs on either size of the standard deviation. 
+
+
+
+When you are done, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.
+
+Congrats!
+
+
