@@ -67,7 +67,8 @@ spotify_songs |>
 
 Write a few sentences about the distribution of danceability scores in the Spotify dataset. Is it a normal distribution, or is it skewed in one direction? What does the mean and one standard distribution tell us about the songs in the dataset? Draft a short story pitch from this data.
 
-The distribution for the danceability scores is skewed to the right, meaning more songs have a higher danceability than those who don't. The mean shows the average danceability of a song on spotify, at about 0.6. The standard distribution shows me that 50% of my data for danceable songs is between 0.5 and about 0.8. 
+The distribution for the danceability scores is more towards the left side of the data, meaning that the data is negatively skewed.This means that there are a lot of songs on spotify with high danceability. The mean shows the average danceability of a song on spotify, at about 0.6. The standard distribution shows me that 50% of my data for danceable songs is between 0.5 and about 0.8. 
+
 A pitch for this data is that more than half of the songs on spotify are extremely danceable. These were all songs released in 2020, so the goal of artists may have been to release upbeat music to get people to stay happy/move around during lockdown. 
 
 
