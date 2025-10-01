@@ -1,0 +1,122 @@
+---
+title: "Oct 1 Activities: M&Ms; Survey; Sampling"
+date: 9-30-2025
+Ashley Burkett
+---
+
+All three class activities are on this .rmd notebook
+
+Activity #1: Activity: M&Ms - Central Limit Theorem
+
+Working in groups, each group will get a handful of candy from the bag, and then count the number of red and black candies. Log those in this Google Sheet 
+
+https://docs.google.com/spreadsheets/d/1KOeoVTq2W7L2T9sWjwh5U_2f59GsTeAylVGD53rNWww/edit?usp=sharing
+
+(give your group a nice name).
+
+Take a look at the values that we all get - what do you notice about the patterns? This is an exercise about the central limit theorem. 
+
+The central limit theorem states that the sampling distribution of the mean of any independent, random variable will be normal or nearly normal, if the sample size is large enough.
+
+Then discuss and try to answer these questions:
+
+--How close is your group's mean to the true proportion of 0.5?
+--Why do different groups get different results?
+--What happens to individual extreme results when we combine all groups?
+--How does this relate to polls and surveys in real life?
+
+Write your answer below. And then you may eat the M&Ms.
+
+**A:**
+Our group's mean is very far from the true proportion of 0.5; mean is 0.92. The groups got different results because each of our random samples contained different numbers of colored M&M's. This is exacerbated because our sample size is small. If you combine all groups, the mean gets closer to 0.5, and becomes more normal. This relates to polls and surveys in real life by representing that the sample size of our test group matters, and the larger the group the more normally distributed the results will be. 
+
+------------------------------------------------------------------------------
+
+# Activity #2:
+
+Belonging Survey
+
+Working in pairs, take a look back at the main findings from UMD's Belonging Survey:
+
+https://president.umd.edu/internal/belonging
+
+
+Specifically, focus on the "Sample Description" section and the Appendix. Discuss the differences and between the population and the sample, and what the document says about how the survey attempted to deal with them. Are there any decisions described in the document that raise questions in your minds? Detail the differences you see and your understanding of the methods they employed (it's ok if you don't understand all of them), and add your questions. You should discuss this as a pair but submit individually.
+
+**A:**
+The population that responded to the survey is 12,223, but that is a very small number compared to the entirety of the UMD community. This is shown because the response rate was only 23%. A UMD article also says that there's over 40,700 students and 14,000 faculty and staff. The population is much larger than the sample that was studied. 
+
+The sample size raises questions about the conclusions that this survey came to. The study says that 78% of undergraduate respondents feel comfortable on campus. However, only 20% of the total responses from the survey were from undergraduate students. This sample size is not large enough to come to conclusions about the entirety of campus. To get better responses, the survey should be shorter, and possibly offer an incentive if filled out. 
+
+How can we conclude things about a campus population with such a small sample size?
+------------------------------------------------------------------------------
+
+# TASK 3: SAMPLING
+
+Based on the class sampling demo (available on Elms), sample data from a population using R and the Tidyverse. You should get started by loading the tidyverse in a new R block.
+
+### Task 1: Load the tidyverse
+
+**A**
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+
+### Task 2: Load 1,000 rows of data with the ages of people from 18-80
+
+**A**
+```{r}
+set.seed(42)
+younguns <- tibble(
+  age = sample(18:80, 1000, replace = TRUE)
+)
+
+head(younguns)
+
+```
+
+### Task 3: Sample 100 rows of data from the dataset
+**A**
+```{r}
+sample_100 <-younguns |> 
+  sample_n(100)
+sample_10 <-younguns |> 
+  sample_n(10)
+```
+
+
+### Task 4: Calculate the mean age and standard deviation of the sample
+**A**
+```{r}
+sample_100 |>
+  summarise (mean= mean(age), sd = sd(age))
+
+sample_10 |>
+  summarise (mean= mean(age), sd = sd(age))
+
+```
+
+
+### Task 5: Calculate the mean age and standard deviation of the population
+**A**
+```{r}
+younguns |>
+  summarise (mean = mean(age), sd = sd(age)
+  )
+```
+
+
+### Task 6: Compare the sample and population statistics
+**A**
+The sample statistics show a mean of about 48% and a standard deviation of about 16%. The mean for the population is 49% (closer to 50%), and has a standard deviation of 17.5%. They're very similar, but the small difference between the two shows how the sample size can create differences in the data. When it's larger, it's closer to 50 but more spread out. When it's smaller, it's further from 50 but less spread out. 
+
+
+Compare the means and standard deviations. Are they similar? Go back and re-run the sampling and statistics calculations with a smaller sample size. How do the results change?
+
+The means and standard deviations are both simialr to each other. When I re-run the calculations with a smaller sample size (20), the sd is much lower than the mean. 
+
+**A**:
+
+When finished, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.
