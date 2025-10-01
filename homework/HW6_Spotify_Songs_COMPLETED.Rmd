@@ -45,7 +45,7 @@ Take the same code and add a vertical line to the histogram for the mean danceab
 ```{r}
 spotify_songs |>
   ggplot() + 
-  geom_histogram(aes(x = danceability), binwidth = 0.1) +
+  geom_histogram(aes(x = danceability), binwidth = 0.01) +
   geom_vline(aes(xintercept = mean(danceability)), color = "red", linetype = "dashed", size = 1) 
 ```
 
@@ -57,10 +57,11 @@ Take the previous code and add two lines to the histogram for the 1st standard d
 ```{r}
 spotify_songs |>
   ggplot() + 
-  geom_histogram(aes(x = danceability), binwidth = 0.1) +
+  geom_histogram(aes(x = danceability), binwidth = 0.05) +
   geom_vline(aes(xintercept = mean(danceability)), color = "red", linetype = "dashed", size = 1) +
   geom_vline(aes(xintercept = mean(danceability) - sd(danceability)), color = "blue", linetype = "dashed", size = 1) +
-    geom_vline(aes(xintercept = mean(danceability) + sd(danceability)), color = "blue", linetype = "dashed", size = 1)
+    geom_vline(aes(xintercept = mean(danceability) + sd(danceability)), color = "blue", linetype = "dashed", size = 1) + 
+labs(title = "Distribution of Danceability Scores in Spotify Songs 2020", x = "Danceability Score", y = "Number of Songs")
 ```
 
 ### Task 7: Describe our results and pitch a story
