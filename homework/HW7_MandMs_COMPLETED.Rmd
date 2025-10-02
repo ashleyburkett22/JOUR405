@@ -1,0 +1,105 @@
+---
+title: "HW7_MandMs"
+date: 10/1/2025
+---
+
+
+In this assignment, you'll be picking up where you left off with the M&Ms activity. You'll load the data and perform some basic statistical analysis. Follow the steps below to complete the assignment.
+
+### Task 1: Load the tidyverse
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+
+### Task 2: Load an M&Ms dataset from https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/mandms.csv
+```{r}
+MMs_data <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/mandms.csv")
+```
+
+
+### Task 3: Sample 5 rows of data from the dataset, and then sample 10 rows, saving each to separate dataframes called sample5 and sample10. Be sure to use set.seed(1234) before you start.
+```{r}
+set.seed(22)
+sample5 <- MMs_data |>
+  sample_n(5)
+
+sample10 <- MMs_data |>
+  sample_n(10)
+
+```
+
+
+### Task 4: Calculate the mean, median and standard deviation of red M&Ms from each of the samples.
+```{r}
+sample5 |>
+  summarise(
+    mean = mean(red), 
+    median = median(red),
+    sd = sd(red)
+  )
+
+sample10 |>
+  summarise(
+    mean = mean(red),
+    median = median(red),
+    sd = sd(red)
+  )
+```
+
+
+### Task 5: Calculate the mean, median and standard deviation of red M&Ms from the population
+
+```{r}
+MMs_data |>
+  summarise(
+    mean = mean(red),
+    median = median(red),
+    sd = sd(red),
+  )
+```
+
+### Task 6: Make three histograms: one each for sample5, sample10 and the original dataset. Include a headline. Use a consistent binwidth.
+
+```{r}
+MMs_data |>
+  ggplot(aes(x=red)) + 
+  geom_histogram(aes(x = red), binwidth = 0.9) +
+labs(title = "Distribution of Red M&Ms", x = "Red", y = "Black")
+
+sample10 |>
+  ggplot(aes(x=red)) + 
+  geom_histogram(aes(x = red), binwidth = 0.9) +
+labs(title = "Distribution of Red M&Ms Out of Ten", x = "Red", y = "Black")
+
+sample5 |>
+  ggplot(aes(x=red)) + 
+  geom_histogram(aes(x = red), binwidth = 0.9) +
+labs(title = "Distribution of Red M&Ms Out of Five", x = "Red", y = "Black")
+
+```
+
+
+### Task 7: Answer questions
+
+#Compare the three sets of means, standard deviations and histograms. Which are more helpful to you in understanding the accuracy of the samples?
+Based on the means, standard deviations, and histograms, I can come to the conclusion that there is a more wide spread of data when there are more objects in the sample. This leads the data to be more accurate in a largest sample size. 
+
+The histograms for the entire sample show a large spread of data, a standard deviation of 16, and the mean shows 72% of the MMs are red. This is considered the most accurate beacuse it's the largest.
+
+On the other hand, the sample size of 5 has little spread on the histogram, the standard deviation is 15, and the mean shows that 73.8% are red. This data differs from the set that we know is more accurate.  
+
+The accuracy of the sample depends on how large the size is. Since the population is larger in the total data, we know that it's accurate, and the smaller sample size differs.
+
+#What does this exercise tell you about the relationship between sample size and estimate accuracy?
+The sample size must be large in order to be an accurate representation of a population. A small sample size doesn't account for all subgroups, and can skew data. 
+
+#How does random sampling introduce variation into statistical estimates?
+Random sampling introduces variation by attemtping to ensure that every subgroup is represented from a population. If the sample is random, and it's from a large group, it is likely that it will be representative. A different sample each time ensures variation.
+
+#If you repeated this process, would the samples always be identical? Why or why not?
+If I repeated the process the samples would not be identical. The large population of MMs that exists in the world would allow for my populations to consistently change, especially the smaller ones.
+
+#When finished, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.
