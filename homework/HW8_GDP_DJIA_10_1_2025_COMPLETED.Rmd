@@ -1,0 +1,119 @@
+---
+title: "HW8_GDP_DJIA_Soccer"
+date: 10-1-2025
+author: "Rob Wells/Derek Willis"
+Ashley Burkett
+---
+
+This homework is in two parts. 
+
+Part 1 is a demonstration that shows you how to create a scatterplot and a linear trend line through those chart points. The data involves soccer fouls.
+
+You don't write code in Part 1. Just run the chunks and see how the code works.
+
+You'll create a scatterplot in the second part looking at GDP and the Dow Jones Industrial Average.
+_______________________________________________________________________________
+
+# Part 1: Soccer Fouls
+Do fouls matter in women's college soccer? In this assignment, you'll be working with a dataset that contains information about soccer matches from last season. You'll load the data, perform some basic statistical analysis, and create a visualization to explore the relationship between fouls and the goal differential (and thus the outcome). Follow the steps below to complete the assignment.
+
+### Task 1: Load the tidyverse
+
+```{r}
+library(tidyverse)
+```
+
+
+### Task 2: Load the soccer dataset from https://raw.githubusercontent.com/dwillis/NCAAWomensSoccerData/refs/heads/main/data/ncaa_womens_soccer_matchstats_2024.csv
+
+```{r}
+matches <- read_csv("https://raw.githubusercontent.com/dwillis/NCAAWomensSoccerData/refs/heads/main/data/ncaa_womens_soccer_matchstats_2024.csv")
+```
+
+
+### Task 3: Create a new column called `goal_diff` that calculates the difference between the two teams' goals.
+
+```{r}
+matches <- matches |> mutate(goal_diff = team_score - opponent_score)
+```
+
+
+
+### Task 4: Use `summarize()` and the `cor()` function to calculate the correlation between fouls and goal differential, using the pearson method.
+
+```{r}
+matches |> summarize(correlation = cor(fouls, goal_diff, method="pearson"))
+```
+
+
+
+### Task 5: Create a scatterplot of fouls and goal differential, using `geom_point()`
+
+```{r}
+
+matches |> 
+  ggplot() +
+  geom_point(aes(x=goal_diff, y=fouls)) +
+  geom_smooth(aes(x=goal_diff, y=fouls), method="lm")
+
+```
+
+_______________________________________________________________________________
+
+
+#Part 2: GDP and DJIA
+
+What is the relationship between the stock market, represented by the Dow Jones Industrial Average, or DJIA, and the Gross Domestic Product, a measure of the U.S. economic activity?
+
+You will examine that question for the past decade, from 2013 through 2024.
+
+The U.S. economy in 2013 had begun to emerge from the Great Depression and heated up in the years before the COVID-19 pandemic hit. The government and private sector shutdown in a bid to save lives, ease overcrowded hospitals and prevent a wider spread of a little-known but often debilitating and deadly virus. As economic life returned to pre-pandemic levels, the outlook for the economy mostly was positive, but inflation remained high for several years.
+
+Your task in this assignment will be to examine the relationship between those two key economic indicators, the DJIA and GDP, for the past decade. You will calculate a correlation coefficient and create a scatterplot to visualize the relationship between the two variables. As usual, you will use the Tidyverse to do this work.
+
+### Task 1: Load the tidyverse
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+### Task 2: Load the GDP and DJIA data
+
+Load the GDP data from https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/gdp_djia.csv
+
+```{r}
+GDP_DJIA <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/gdp_djia.csv")
+```
+
+### Task 3: Calculate the correlation coefficient
+
+Use the `cor()` function to calculate the correlation coefficient between the DJIA and GDP.
+
+```{r}
+GDP_DJIA |>
+  summarise(
+    correlation = cor(GDP, DJIA, method="pearson")
+  )
+```
+
+### Task 4: Create a scatterplot
+
+Use the `ggplot()` function to create a scatterplot of the DJIA and GDP. Be sure to label your axes and add a title.
+
+```{r}
+GDP_DJIA |> 
+  ggplot() +
+  geom_point(aes(x=GDP, y=DJIA)) +
+  geom_smooth(aes(x=GDP, y=DJIA), method="lm")
+```
+
+### Task 5: Describe our results
+
+#Write a few sentences about the relationship between the DJIA and GDP. Is there a strong correlation between the two variables? What does the scatterplot show?
+
+The DJIA and GDP are strongly correlated between 2013 and 2024, with a coefficient of 0.95. The scatterplot shows this correlation as well with the points being close together in the beginng. Despite the points growing slightly furhter apart later on, the data still shows a correlation. This means that the DJIA and the GDP rise and fall together, but they may not cause one another to move. 
+
+
+When you are done, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.
+
