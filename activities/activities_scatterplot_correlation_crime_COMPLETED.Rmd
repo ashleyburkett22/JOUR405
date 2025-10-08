@@ -1,0 +1,196 @@
+---
+title: "Activities - Scatterplot, Correlation, Crime"
+author: "Wells"
+date: "2025-10-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Activity #1:
+
+Examine this New York Times scatterplot from 2013:
+https://archive.nytimes.com/www.nytimes.com/interactive/2013/05/07/education/college-admissions-gap.html?_r=0
+
+The graphic displays four different scatterplots showing relationships between student demographics and college acceptance rates. For each of the four scatterplots:
+
+a) Describe the relationship (or lack thereof) between the two variables.
+b) Note the specific words and phrases the graphic uses to characterize each relationship.
+
+Write 1-2 sentences summarizing each scatterplot.
+
+Name each person in your group who worked on this entry.
+
+**Write Answer #1:**
+Scatterplot 1: 
+  a) There is little to no relationship between the graduation rate and percent of black students at these colleges. 
+  b) The scientific words/phrases that the graphic uses to characterize the relationship is "roughly 15 percent" and "more than 70 percent"
+  c) This scatterplot shows that some colleges who have high graduation rates also have a very low population of black students on campus. All of these schools have a percent of black students at 10% or below, and graduation rate of 70% and above.
+  
+Scatterplot 2: 
+ a) There is a strong relationship between the graduation rate and percent of black students.  
+  b) The scientific words/phrases that the graphic uses to characterize the relationship is "half as likely" and "many more"
+  c) This scatterplot shows that colleges with a low graduation rate tend to have a higher population of black students. The schools with about a 50% black population are associated with a 20% or less graduation rate.  
+
+Scatterplot 3: 
+ a) There is a semi-strong relationship between graduation rate and the population of hispanics at community colleges.  
+  b) The scientific words/phrases that the graphic uses to characterize the relationship is "more likely" and "tend to have more."
+  c) This scatterplot shows that community colleges with a higher population of hispanic students tend to have less students graduate. The graph says that hispanics are more likely to attend community colleges, where there are more dropouts, which is represented in the graphic. 
+
+Scatterplot 4: 
+ a) There is a no relationship between graduation rate and the population of Asians at high school.  
+  b) The scientific words/phrases that the graphic uses to characterize the relationship is "greater proportion" and "more than 80%"
+  c) This scatterplot shows that Asian student population does not show a very strong skew on graduation rates at high schools. The graph shows that a school can have a low or high population of Asian students, but the graduation rates will vary in each measurment. 
+-------------------------------------------------------------------------------
+
+Activity #2: Correlation Demonstration
+
+In the following exercise, we will look at data about 16 different consultants, their aptitude scores and their performance scores.
+
+Our question: what is the relationship between a consultant's aptitude and their performance? 
+
+How are they correlated?
+
+Below we calculate a Pearson's correlation coefficient and then create a regression line.
+
+```{r}
+library(tidyverse)
+```
+
+Load data for aptitude and performance for 16 different consultants
+```{r}
+aptitude <- c(45, 81, 65, 87, 68, 91, 77, 61, 55, 66, 82, 93, 76, 83, 61, 74)
+performance <- c(56, 74, 56, 81, 75, 84, 68, 52, 57, 82, 73, 90, 67, 79, 70, 66)
+consultant <- c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
+#this builds our table
+consultants <- data.frame(consultant, aptitude, performance)
+consultants
+```
+
+
+### Task 1: Use `summarize()` and the `cor()` function to calculate the correlation between aptitude and performance, using the pearson method.
+
+```{r}
+consultants |> summarize(correlation = cor(aptitude, performance, method="pearson"))
+```
+
+We see a Pearson's correlation coefficient of 0.783.
+What does that mean?
+
+The Pearson correlation scale is from -1 to 1.
+-1 is a perfect negative correlation
+1 is a perfect positive correlation
+
+How do we interpret the values in between?
+
+-- High Degree: Values between ±0.50 and ±1 suggest a strong correlation.
+-- Moderate Degree: Values between ±0.30 and ±0.49 indicate a moderate correlation.
+-- Low Degree: Values below +0.29 are considered a weak correlation.
+-- No Correlation: A value of zero implies no relationship.
+
+**Question: How would you describe the 0.783 correlation between aptitute and performance?**
+
+**A: Write your answer:**
+The correlation of 0.783 shows a strong correlation. This is between 0.5 and 1, which according to Pearson's correlation, represents a strong relationship between aptitute and performance. 
+
+
+### Task 2: Create a scatterplot of aptitude and performance, using `geom_point()`
+
+```{r}
+
+consultants |> 
+  ggplot() +
+  geom_point(aes(x=aptitude, y=performance)) +
+  geom_smooth(aes(x=aptitude, y=performance), method="lm") +
+  expand_limits(x = 0, y = 0)
+
+```
+
+
+The "best fit" line is known as a regression line that helps us understand the relationship between two variables. This predicts the dependent variable based on the independent variable. 
+
+A regression line is a straight line showing a best-fit between independent and dependent variables.
+
+In the example above, aptitude would be the independent variable, or the predictor. That's because we would expect aptitude to predict performance, which is the dependent variable, or the outcome variable.
+
+Independent = predictor
+Dependent = outcome
+
+Regression is one step ahead of correlation. It helps predict the values of dependent variables or outcomes with respect to changes in independent or explanatory variables. 
+
+Regression lines help predict outcomes.
+
+
+-------------------------------------------------------------------------------
+
+Activity #3: 
+
+# PG Murders and Heat
+
+Let's explore the relationship between crime and hot weather using homicide and temperature data from Prince George's County. 
+
+You'll load the data, perform some basic statistical analysis, and create a scatterplot to explore the relationship. Follow the steps below to complete the assignment.
+
+### Task 1: Load the tidyverse
+
+**write code below**
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+
+### Task 2: Load the dataset from [https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/pg_murder_temps.csv](https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/pg_murder_temps.csv)
+
+**write code below**
+```{r}
+murders_temp <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/pg_murder_temps.csv")
+```
+
+
+
+### Task 3: Use `summarize()` and the `cor()` function to calculate the correlation between murders and temperature, using the pearson method.
+
+**write code below**
+```{r}
+murders_temp |>
+summarize(correlation = cor(murders, temperature, method="pearson"))
+```
+
+
+
+### Task 4: Create a scatterplot of murders and temperature, using `geom_point()`. Your aes() will have temperatures on the x axis, murders on the y axis and add a label for the month (so label=month inside the aes()).
+
+**write code below**
+```{r}
+murders_temp |>
+  ggplot() +
+  geom_point(aes(x=temperature, y=murders)) +
+  geom_text(aes(x=temperature, y=murders, label=month)) +
+  labs(title = "Murders and Temperatures in Prince George's County by Month", x = "Temperature", y = "Murder")
+```
+
+
+### Task 5: Add labels to the scatterplot using geom_text(). Inside geom_text() put the same aes() as geom_point in Task 4, then after the aes() add size = 5.
+
+**write code below**
+```{r}
+murders_temp |>
+  ggplot() +
+  geom_point(aes(x=temperature, y=murders)) +
+  geom_text(aes(x=temperature, y=murders, label=month, size=5)) +
+  geom_smooth(aes(x=temperature, y=murders), method="lm") +
+  labs(title = "Murders and Temperatures in Prince George's County by Month", x = "Temperature", y = "Murder")
+ 
+```
+
+
+### Task 6: Describe the results of both the correlation calculation and the scatterplot.
+
+**Write Answer:**
+The results show that there's weak correlation between the temperatures per month and the number of murders in those months. The correlation calculation is a 0.58, which is just above the minimum amount needed for there to be any sense of correlation. The graph shows this slight curve, but it is barely present. I can conclude the weak positive correlation from these two pieces of evidence. 
+
+
+When you are done, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.

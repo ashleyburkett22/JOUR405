@@ -65,19 +65,19 @@ MMs_data |>
 
 ```{r}
 MMs_data |>
-  ggplot(aes(x=red)) + 
-  geom_histogram(aes(x = red), binwidth = 0.9) +
-labs(title = "Distribution of Red M&Ms", x = "Red", y = "Black")
+  ggplot() + 
+  geom_histogram(aes(x = red), fill = "blue", alpha = 0.5, binwidth = 0.9) +
+labs(title = "Distribution of Red M&Ms", x = "Red", y = "Frequency")
 
 sample10 |>
-  ggplot(aes(x=red)) + 
-  geom_histogram(aes(x = red), binwidth = 0.9) +
-labs(title = "Distribution of Red M&Ms Out of Ten", x = "Red", y = "Black")
+  ggplot() + 
+  geom_histogram(aes(x = red), fill = "blue", alpha = 0.5, binwidth = 2) +
+labs(title = "Distribution of Red M&Ms Out of Ten", x = "Red", y = "Frequency")
 
 sample5 |>
-  ggplot(aes(x=red)) + 
-  geom_histogram(aes(x = red), binwidth = 0.9) +
-labs(title = "Distribution of Red M&Ms Out of Five", x = "Red", y = "Black")
+ ggplot() +
+  geom_histogram(aes(x=red), fill = "blue", alpha = 0.5, binwidth = 2) + 
+  labs(title = "Distribution of Red M&Ms Out of Five", x = "Red", y = "Frequency")
 
 ```
 
