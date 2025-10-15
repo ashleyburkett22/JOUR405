@@ -38,6 +38,8 @@ md_cities_rates <- md_cities |>
 
 #Examine the new dataframe, `md_cities_rates`, by clicking on it in the Environment tab in RStudio and sorting by the rate columns. Write a couple of sentences about the results, comparing and contrasting the cities with the highest rates (both violent and property) in 2019 and 2020. Do you see any patterns? What does this tell you about crime in Maryland cities? What's the story here?
 
+Good but we need some specifics, such as: For example: In 2019, Baltimore had the highest rate of violent crime, at 18.3 crimes per 1,000 people, far greater than Ocean City with 13.1 crimes per 1,000 and Williamsport at 12.9 per 1,000. *****
+
 Highest Violent Rate 2019: Baltimore (Ocean City 2nd)
 Highest property Rate 2019: Ocean City
 Violent Rate 2020: Ocean City (Baltimore 2nd)
@@ -69,6 +71,8 @@ Despite the high numbers in Edmonston, this can be attributed to a small county 
 ### Task 8: Tell the Best Story
 
 #Write up a lede and nutgraf of a story with the _best_ story idea you've found in this assignment. The lede should be a single sentence that summarizes the most important information in the data. The nutgraf should be a paragraph that provides more context and explains why the data is important.
+
+Violent crime rose the most in changes in violent crime came Edmonson in Prince George's County, up 895% to 7 crimes per 1,000 people; Poolesville in Montgomery County, up 607% to 1.3 crimes per 1,000 people and Pocomole City in Worcester County, up 301% to 3 crimes per 1,000 people ***** BALTIMORE DOES NOT HAVE THE HIGHEST CRIME RATE PER CAPITA 
 
 Baltimore has the most crime Maryland, but fluctuations up and down throughout the state are frequent in many cities. 
 

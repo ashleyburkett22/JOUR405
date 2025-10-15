@@ -102,15 +102,14 @@ GDP_DJIA |>
 Use the `ggplot()` function to create a scatterplot of the DJIA and GDP. Be sure to label your axes and add a title.
 
 ```{r}
-GDP_DJIA |> 
+gdp_djia |> 
   ggplot() +
-  geom_point(aes(x=GDP, y=DJIA)) +
-  geom_smooth(aes(x=GDP, y=DJIA), method="lm") +
-  labs(
-    title = "The Gross Domestic Product and Dow Jones Industrial Average Correlation 2013-2024",
-    x = "GDP",
-    y = "DJIA"
-  )
+  geom_point(aes(x = DJIA, y = GDP)) +
+  geom_smooth(aes(x = DJIA, y = GDP), method = 'lm') +
+  geom_text(aes(x = DJIA, y = GDP, label = Quarter)) +
+  labs(title = "DJIA vs. GDP",subtitle = "What's the relationship?",
+       x = "DJIA",
+       y = "GDP")
 ```
 
 ### Task 5: Describe our results

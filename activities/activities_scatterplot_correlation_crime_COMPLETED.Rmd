@@ -103,6 +103,7 @@ The correlation of 0.783 shows a strong correlation. This is between 0.5 and 1, 
 consultants |> 
   ggplot() +
   geom_point(aes(x=aptitude, y=performance)) +
+  geom_text(aes(x=aptitude, y=performance, label=consultant, size=5)) +
   geom_smooth(aes(x=aptitude, y=performance), method="lm") +
   expand_limits(x = 0, y = 0)
 

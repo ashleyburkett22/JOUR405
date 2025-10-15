@@ -22,9 +22,9 @@ spotify_songs <- read.csv("https://raw.githubusercontent.com/dwillis/jour405/ref
 Write code to calculate the mean and standard deviation of the danceability scores in the Spotify dataset. Display those.
 
 ```{r}
-spotify_songs |> mutate(
-  mean(danceability),
-  sd(danceability)
+spotify |> 
+  summarize(sd_danceability = sd(danceability), 
+            mean_danceability = mean(danceability))
 )
 ```
 
@@ -33,9 +33,10 @@ spotify_songs |> mutate(
 Write code to create a histogram of the danceability scores in the Spotify dataset, based on the example we did in class.
 
 ```{r}
-spotify_songs |> 
-  ggplot() + 
-  geom_histogram(aes(x = danceability), binwidth = 0.1)
+spotify |> 
+  ggplot(aes(x = danceability)) +
+  geom_histogram(binwidth = 0.01, fill = "blue", color = "black") +
+  labs(title = "Distribution of Danceability Scores in Spotify Songs 2020", x = "Danceability Score", y = "Number of Songs")
 ```
 
 ### Task 5: Add a line to the histogram for the mean danceability score
@@ -43,10 +44,11 @@ spotify_songs |>
 Take the same code and add a vertical line to the histogram for the mean danceability score, based on the example in class.
 
 ```{r}
-spotify_songs |>
-  ggplot() + 
-  geom_histogram(aes(x = danceability), binwidth = 0.01) +
-  geom_vline(aes(xintercept = mean(danceability)), color = "red", linetype = "dashed", size = 1) 
+spotify |> 
+  ggplot(aes(x = danceability)) +
+  geom_histogram(binwidth = 0.01, fill = "blue", color = "black") +
+  geom_vline(aes(xintercept = mean(danceability, na.rm = TRUE)), color = "red", linetype = "dashed", size = 1)  +
+  labs(title = "Distribution of Danceability Scores in Spotify Songs 2020", x = "Danceability Score", y = "Number of Songs")
 ```
 
 
@@ -55,13 +57,13 @@ spotify_songs |>
 Take the previous code and add two lines to the histogram for the 1st standard deviation below and above the mean score.
 
 ```{r}
-spotify_songs |>
-  ggplot() + 
-  geom_histogram(aes(x = danceability), binwidth = 0.05) +
-  geom_vline(aes(xintercept = mean(danceability)), color = "red", linetype = "dashed", size = 1) +
-  geom_vline(aes(xintercept = mean(danceability) - sd(danceability)), color = "blue", linetype = "dashed", size = 1) +
-    geom_vline(aes(xintercept = mean(danceability) + sd(danceability)), color = "blue", linetype = "dashed", size = 1) + 
-labs(title = "Distribution of Danceability Scores in Spotify Songs 2020", x = "Danceability Score", y = "Number of Songs")
+spotify |> 
+  ggplot(aes(x = danceability)) +
+  geom_histogram(binwidth = 0.05, fill = "blue", color = "black") +
+  geom_vline(aes(xintercept = mean(danceability)), color = "red", linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(danceability) + sd(danceability)), color = "yellow", linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(danceability) - sd(danceability)), color = "yellow", linetype = "dashed") +
+  labs(title = "Distribution of Danceability Scores in Spotify Songs 2020", x = "Danceability Score", y = "Number of Songs")
 ```
 
 ### Task 7: Describe our results and pitch a story

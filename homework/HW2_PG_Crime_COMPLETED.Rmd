@@ -35,8 +35,15 @@ The category, robbery residential, makes it hard to summarize the data because t
 Calculate the total number of incidents per month for each category using `mutate()`, calling the new column `total_incidents`. Then calculate the average number of incidents per month for each category of crime, calling the new column `average_incidents`. Assign the result to a new dataframe called `pg_crime_averages`.
 
 ```{r}
-pg_crime_averages <- pg_crime |> mutate(total_incidents = rowSums(across(2:13))) |>
-mutate(average_incidents = total_incidents/12)
+pg_crime_averages <- pg_crime |> 
+  mutate(total_incidents = `Jan` + `Feb` + `Mar` + `Apr` + `May` + `Jun` + `Jul` + `Aug` + `Sep` + `Oct` + `Nov` + `Dec`) |> 
+  mutate(average_incidents = total_incidents / 12)
+
+OR
+
+pg_crime_averages <- pg_crime |> 
+  mutate(total_incidents =  rowSums(across(2:13), na.rm=TRUE)) |> 
+  mutate(average_incidents = total_incidents/12)
 ```
 
 ### Task 5: Describe the Averages
@@ -60,6 +67,12 @@ mutate(
     july_change = ((jul - average_incidents) / average_incidents) * 100,
     august_change = ((aug - average_incidents) / average_incidents) * 100
 )
+
+summer_crime_averages <- pg_crime_averages |> 
+  mutate(june_change = (Jun - average_incidents) / average_incidents * 100) |> 
+  mutate(july_change = (Jul - average_incidents) / average_incidents * 100) |> 
+  mutate(august_change = (Aug - average_incidents) / average_incidents * 100)
+
 ```
 
 ### Task 7: Describe the Summer Crime Averages
