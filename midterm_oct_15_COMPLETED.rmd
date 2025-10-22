@@ -34,7 +34,7 @@ restaurant_scores <- read_csv("https://raw.githubusercontent.com/dwillis/jour405
 
 ## Task 2: Calculate the mean and standard deviation maximum and minimum of compliance scores. Put the results in a new dataframe called "compliance_stats." 
 ```{r}
-compliance_stats <- restaurant_scores |>
+compliance_stats <- restaurant_scores %>%
   mutate(
     mean_score = mean(compliance_score, na.rm = TRUE),
     sd_score = sd(compliance_score, na.rm = TRUE),
@@ -47,7 +47,7 @@ compliance_stats <- restaurant_scores |>
 ```{r}
 compliance_stats |> 
   ggplot(aes(x = compliance_score)) +
-  geom_histogram(binwidth = 10, fill = "blue", color = "black") +
+  geom_histogram(binwidth = 10, fill = "blue", color = "black", alpha = 0.7) +
   geom_vline(aes(xintercept = mean(compliance_score, na.rm = TRUE)), color = "red", linetype = "dashed", size = 1)  +
   labs(title = "Health Inspection Compliance Scores of Restaurants in Montgomery County", x = "Compliance Score", y = "Number of Restaurants")
 
@@ -57,6 +57,9 @@ compliance_stats |>
 
 The histogram shows a negative skew to the data, meaning that there's a large number of restaurants that scored high on the compliance score.  The standard deviation is 5.826, which is low. This means that the majority of the data is close to the mean, and there's very little data spread out across the histogram. The story is that most of the restaurants in Montgomery County received high compliance scores on the health inspection. 
 
+***469 restaurants below the mean score of 96.3. The story is that 4,469 restuarants are below the mean score of 96.3. There were 7,385 above the average.
+
+***The distribution is skewed to the left with a large number of establishments having an above average score.
 
 ## Part 2: High School Athletics (30 points)
 
@@ -73,7 +76,7 @@ Add two columns called total and girls_pct using mutate(), with the total adding
 ```{r}
 sports_participation <- sports_participation |>
   mutate(
-    total = sum(boys + girls),
+    total = (boys + girls),
     girls_pct = (total/girls) *100
   )
 ```
@@ -90,8 +93,8 @@ sports_participation |>
 ```{r}
 sports_participation |>
   ggplot() +
-  geom_point(aes(x = girls, y = boys)) +
-  geom_smooth(aes(x = girls, y = boys)) +
+  geom_point(aes(x = girls, y = boys), alpha = 0.7) +
+  geom_smooth(aes(x = girls, y = boys), method = "lm") +
   geom_text(aes(x = girls, y = boys, label = district))
   labs(title = "Maryland High School Sports Participation Boys v. Girls", x = "Girls Count", y = "Boys Count" )
 ```
@@ -103,6 +106,8 @@ sports_participation |>
 The corrrelation coefficient is 0.982419, meaning that there's a strong linear relationship between the number of boys and girls that participate in sports. The scatterplot shows the positive correlation as the line rises to the right. This shows a high level of gender equity at high schools in Maryland. 
 
 The school districts that are below the line have a higher number of boys that participate in sports as opposed to girls, while those below the line have more girls than boys who participate. The school dsitricts that are the most worth examining further are Montgomery County, who has a high level of boys and girls at There's 9,866 boys and 8,339 girls. On the lower end is Kent County, with 73 boys and 82 girls. 
+
+***The correlation coefficient is 0.982419. There is a strong positive correlation ebtween boys and girls. The scatterplot reinforces that the line best fit goes politively close to all the data points. Above the line habe more girls, below have more boys. 
 
 ## Part 3: Maryland Car Theft Rates (25 points)
 
