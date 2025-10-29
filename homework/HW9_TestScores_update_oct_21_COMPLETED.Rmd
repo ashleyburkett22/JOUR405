@@ -48,6 +48,9 @@ score_data
 ### Reflection Question 1:  (2 points)
 Based on just looking at the score_data dataframe, have test scores improved? How can you tell?
 Based on just looking at the score_data dataframe, I cannot tell if the scores have changed. I need to calculate the mean or sd of the new scores to compare to past scores.
+
+The new lowest score is 73, but the old mean was just 72. That means that the reading scores went up, since 72 isn't a data point anymore. 
+
 ## Task 2: Calculate key statistics  (2 points)
 
 Like Task 1, you will need to replace values where it says REPLACE_ME before running any code.
