@@ -1,0 +1,202 @@
+---
+title: "HW12 car theft anova"
+author: "Your Name"
+---
+
+**Ashley Burkett**
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      fig.width = 10, fig.height = 6)
+```
+
+## Introduction
+
+This analysis examines the impact of a significant spike in car theft rates in 2023 in Prince George's County, and whether that spike has led to a sustained higher rate of car theft in the county. We'll use Analysis of Variance (ANOVA) to determine if theft rates differ significantly between pre-spike (before 2023), spike (2023), and post-spike (2024-present) periods.
+
+## Data Preparation and Exploration
+
+### Loading Libraries and Data
+
+```{r load-libraries}
+# Load required libraries
+library(tidyverse)
+library(lubridate)
+```
+
+```{r load-data}
+# Import data
+theft_data <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/car_thefts_month17_25.csv")
+
+# Look at the first few rows
+head(theft_data)
+
+# Get a summary of the data
+summary(theft_data)
+```
+
+
+### Get the data how we want it and calculate the rates
+
+**Task 1** Replace REPLACE_ME with the variables you need to calculate the theft_rate (2 points)
+
+```{r process-data}
+# Calculate theft rate and create time period variable
+theft_data <- theft_data |>
+  mutate(
+    date = as.Date(month),
+    year = year(date),
+    month_number = month(date),
+    theft_rate = (total / population) * 100000,
+    time_period = case_when(
+      year < 2023 ~ "Pre-spike",
+      year == 2023 ~ "Spike year",
+      year > 2023 ~ "Post-spike"
+    )
+  )
+
+# Create summary by time period
+period_summary <- theft_data |>
+  group_by(time_period) |>
+  summarize(
+    mean_thefts = mean(total),
+    mean_rate = mean(theft_rate),
+    median_rate = median(theft_rate),
+    sd_rate = sd(theft_rate),
+    n = n(),
+    .groups = "drop"
+  )
+
+# Display the summary
+period_summary
+```
+
+**Task 2** Describe the results of calculating the rates for each period. What do they suggest? (3 points)
+
+**The results suggest that following the spike, there was a sustained higher rate of car theft in Prince George's County. The mean rate before the spike was 23.19, the spike itself has a 59.95 mean rate, and there's a 43.32 mean rate following the spike. The sample sizes also notably varied each year, with more observations before the spike than after. The medians and standard deviations reflect this same pattern, of a higher rate after the spike. **
+
+## Visualizing the Spike Pattern
+
+### Time Series Plot
+
+```{r time-series}
+# Time series plot showing the spike pattern
+ggplot(theft_data, aes(x = date, y = theft_rate)) +
+  geom_line() +
+  geom_smooth(method = "loess", span = 0.2) +
+  geom_vline(xintercept = as.Date("2023-01-01"), linetype = "dashed", color = "red") +
+  geom_vline(xintercept = as.Date("2024-01-01"), linetype = "dashed", color = "red") +
+  annotate("text", x = as.Date("2023-07-01"), y = max(theft_data$theft_rate) * 0.9, 
+           label = "Spike Year", color = "red") +
+  labs(title = "Monthly Car Theft Rates (2017-2025) with Spike Highlighted",
+       x = "Date", y = "Thefts per 100,000 Population") +
+  theme_minimal()
+```
+
+**Task 3** Describe the output of this chart and then give it a better, more active title that provides the lede (3 points)
+
+**The output of this chart depicts the spike year beween red lines, where the blue and black lines both also peak. The measurements before the surge show minimal rates of car theft, but following the spike, the data remains higher than before. The data also goes back to 2018 before the spike, but afterwards, just one year is measured.**
+
+**Car Thefts in Prince George's County Spiked in 2023, and Have Yet to Recover**
+
+Now let's take a look at average theft rates.
+
+### Yearly Average Theft Rates
+
+```{r yearly-means}
+# Calculate yearly means
+yearly_means <- theft_data |>
+  group_by(year) |>
+  summarize(
+    mean_rate = mean(theft_rate),
+    .groups = "drop"
+  )
+
+# Plot yearly means
+ggplot(yearly_means, aes(x = year, y = mean_rate)) +
+  geom_line(size = 1) +
+  geom_point(size = 3, color = "blue") +
+  geom_point(data = yearly_means |> filter(year == 2023), 
+             aes(x = year, y = mean_rate), size = 4, color = "red") +
+  labs(title = "Average Annual Car Theft Rates",
+       x = "Year", y = "Average Thefts per 100,000 Population") +
+  theme_minimal() +
+  scale_x_continuous(breaks = 2017:2025)
+```
+
+## One-way ANOVA Analysis
+
+### Hypothesis Formulation
+
+For our ANOVA test, we'll compare the mean theft rates between the three time periods. First we need to create our hypotheses.
+
+**Task 4** Fill in the hypotheses (2 points)
+
+- **Null Hypothesis (H0)**:   There was no change in mean rates of car thefts in Prince George's County before v. after the spike
+
+- **Alternative Hypothesis (H1)**: There was a change in mean rates of car thefts in Prince George's County before v. after the spike
+
+### One-way ANOVA Test
+
+```{r anova-test}
+# Perform one-way ANOVA on theft rates by time period
+period_anova <- aov(theft_rate ~ time_period, data = theft_data)
+summary(period_anova)
+```
+
+**Task 5** Describe the result: are there real differences in the average rates between the time periods? Is this result significant? (5 points)
+
+**There is a real difference in the average rates between the time periods, and the results are statistically significant. This is shown in the ANOVA test shows a p-value that's less than 2e-16, which is smaller than 0.001. This also  means that there is a 99.9% confidence level. The ANOVA test also shows three stars (***) which further emphasize the significance. The pre-spike, spike, and post spike periods are statistically significant. 
+
+## Compare the differences between specific periods
+
+Run our post-anova Tukey test and examine the results. 
+
+```{r posthoc}
+# Tukey's HSD test
+tukey_results <- TukeyHSD(period_anova)
+print(tukey_results)
+```
+
+
+```{r period-means}
+# Visualize time period means with confidence intervals
+period_rates <- theft_data |>
+  group_by(time_period) |>
+  summarize(
+    mean_rate = mean(theft_rate),
+    se = sd(theft_rate) / sqrt(n()),
+    .groups = "drop"
+  ) |>
+  mutate(
+    lower_ci = mean_rate - qt(0.975, n() - 1) * se,
+    upper_ci = mean_rate + qt(0.975, n() - 1) * se
+  )
+
+# Ensure time period is ordered correctly
+period_rates$time_period <- factor(period_rates$time_period, 
+                                   levels = c("Pre-spike", "Spike year", "Post-spike"))
+
+ggplot(period_rates, aes(x = time_period, y = mean_rate, fill = time_period)) +
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2) +
+  labs(title = "Car Theft Rates by Time Period with 95% Confidence Intervals",
+       x = "", y = "Mean Theft Rate per 100,000") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+## Conclusion
+
+This analysis has examined whether there are significant differences in car theft rates between the pre-spike period (before 2023), the spike year (2023), and the post-spike period (after 2023).
+
+**Task 6** Describe the results of the Tukey's test and chart showing confidence intervals. Is there a significant difference between the three periods? In particular, is the difference between the pre-spike and post-spike periods real and significant? Write a headline and lede reporting these findings, focusing on the pre- and post-spike periods. (5 points)
+
+**The Tukey's test shows that all three time periods have statistically significant differences between the car theft rates. Rates were about 20 points higher pre v. post spike, 17 points higher between spike year and post spike, and 37 points higher between spike year and pre spike. The chart shows how high the confidence intervals are with the error bars, which don't overlap, signifying statistical significance. The difference between pre and post spike periods has a real significance, as depicted on the Tukey test by the comparisons and as shown on the chart by the bars. **
+
+**Car Thefts in Prince George's County Spiked in 2023, and Have Yet to Recover**
+
+**Data analysis of car theft statistics in Prince George's County shows a spike in 2023, but rates remain higher in the area than before the surge. During the spike there was an average of 573.42 thefts per 100,000 people. Before the spike the average was just 216.9 thefts per 100,000 people, but following the spike, the average remains high at 418.79 thefts per 100,000 people. There is a large 20 point difference between pre and post spike data. Statistical tests shows that the data is statistically significant, and emphasizes a lasting higher rate of car thefts in Prince George's County, following the 2023 spike.**
+
+
