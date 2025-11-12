@@ -1,0 +1,74 @@
+---
+title: "Final_Billboard100"
+output: final_project
+date: "2025-11-05"
+author: "Ashley Burkett"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+## Read CSV
+
+I read the data from the Billboard Hot 100 Number One database, from https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ZUiCK1XvEjknnn-tooSh4ay4DAOeP7oaJrNaRkAIoxz-C0Axvct7yoD3W-L3LJN-g6dZV6qIwv53/pub?gid=1077686609&single=true&output=csv"
+
+```{r}
+billboard_100 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ZUiCK1XvEjknnn-tooSh4ay4DAOeP7oaJrNaRkAIoxz-C0Axvct7yoD3W-L3LJN-g6dZV6qIwv53/pub?gid=1077686609&single=true&output=csv")
+```
+
+## Find mean/median/mode/sd for one category. I chose to focus on the song artist's age from when their song made it as a number one. I got the statistics from "front person age."
+
+```{r}
+billboard_100 |>
+  summarise(
+    mean=(mean(Front.Person.Age, na.rm=TRUE)),
+    median=(median(Front.Person.Age, na.rm=TRUE)),
+    sd=(sd(Front.Person.Age, na.rm=TRUE))
+  )
+```
+
+## Bar chart of the artist's ages of songs that were ranked #1. 
+
+```{r}
+billboard_100 |>
+  ggplot() +
+  geom_histogram(aes(x=Front.Person.Age), fill="blue", alpha=0.5, binwidth=0.9) +
+
+geom_vline(aes(xintercept = mean(Front.Person.Age, na.rm=TRUE)), color="red", linetype="dashed", size=1)
+
+labs(title="Distribtuion of Ages for Billboard Hot 100 Number One Artists", x="Front Person Age", y="Count")
+```
+- **What does it contain and what time period does it cover?**
+The Billboard Hot 100 Number Ones Database shows me each song that made it to number one on the Billboard Hot 100 list, along with the song name, it's artist, and the date released. The database further includes more statistics about each song, including categories about the amount of time it was #1, the demographic of the artist, genres/styles, and even instruments used. The dataset ranges from August 4th, 1958 to January 11, 2025. 
+
+--**Which columns will be most important for your analysis?**
+The columns that will be most important to my analysis is the "Front Person Age." I'm looking to study whether the age of an artist and the time their songs went on number 1 are related. 
+
+--**What's missing that you might need or want?**
+
+--**Select a relevant column and produce basic descriptive statistics on the mean, median, lowest and highest values.**
+
+**Next, propose a newsworthy hypothesis (or several of them) for your dataset. You'll be looking to find (or eliminate possible story ideas) using the techniques you've learned in this class. You'll start that effort this week by coming up with some theories or questions that you're interested in exploring that can be answered with the dataset you selected.**
+
+--**What questions do you have about it or need help answering?**
+
+```{r}
+option command i 
+```
+
+
+Artist race does not affect the song popularity
+
+The race of the artist directly affects the populraity of their hit song more than 50% of the most popular songs were produced by black artists / whtie artists in the 50s and black artists in the 70s 
+
+Popularity = number of weeks at number 1 
+
+Percent that shows an association 
+
+more 
