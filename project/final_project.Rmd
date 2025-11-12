@@ -22,53 +22,56 @@ I read the data from the Billboard Hot 100 Number One database, from https://doc
 billboard_100 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ZUiCK1XvEjknnn-tooSh4ay4DAOeP7oaJrNaRkAIoxz-C0Axvct7yoD3W-L3LJN-g6dZV6qIwv53/pub?gid=1077686609&single=true&output=csv")
 ```
 
-## Find mean/median/mode/sd for one category. I chose to focus on the song artist's age from when their song made it as a number one. I got the statistics from "front person age."
+-- **What does it contain and what time period does it cover?**
+The Billboard Hot 100 Number Ones Database shows me each song that made it to number one on the list, along with the song name, it's artist, and the date released. The database further includes more statistics about each song. This information includes specifics about the music such as genre, instrument used, lyrics, and danceability. It also includes details about the artist (gender, race, age) and it's popularity as a Hot 100 (number of weeks at #1, rating).
+
+--**Which columns will be most important for your analysis?**
+The columns that will be most important to my analysis are the artist's race, which is depicted in the sections titled "Artist White" and "Artist Black." I will also need to measure the popularity of the song, which will be deciphered from "Weeks at Number One."
+
+--**What's missing that you might need or want?**
+There are many races that are missing from this database. The only artist race's that are noted are "White" and "Black," however, there are many other categories that the artists could fit in. For a full diversity analysis, I would need Asian, Native, Hispanic/Non-Hispanic, NHPI, and "other." Something that's also missing is a general popularity rating. To curb this, I'm using the number of weeks the song was rated #1 as a depiction for popularity. 
+
+--**Select a relevant column and produce basic descriptive statistics on the mean, median, lowest and highest values.**
 
 ```{r}
 billboard_100 |>
   summarise(
-    mean=(mean(Front.Person.Age, na.rm=TRUE)),
-    median=(median(Front.Person.Age, na.rm=TRUE)),
-    sd=(sd(Front.Person.Age, na.rm=TRUE))
+    mean=mean(Artist.Black, na.rm=TRUE),
+    median=median(Artist.Black, na.rm=TRUE),
+    min=min(Artist.Black, na.rm=TRUE),
+    max=max(Artist.Black, na.rm=TRUE)
+  )
+
+billboard_100 |>
+  summarise(
+    mean=mean(Artist.White, na.rm=TRUE),
+    median=median(Artist.White, na.rm=TRUE),
+    min=min(Artist.White, na.rm=TRUE),
+    max=max(Artist.White, na.rm=TRUE)
+  )
+
+billboard_100 |>
+  summarise(
+    mean=mean(Weeks.at.Number.One, na.rm=TRUE),
+    median=median(Weeks.at.Number.One, na.rm=TRUE),
+    min=min(Weeks.at.Number.One, na.rm=TRUE),
+    max=max(Weeks.at.Number.One, na.rm=TRUE)
   )
 ```
 
-## Bar chart of the artist's ages of songs that were ranked #1. 
-
-```{r}
-billboard_100 |>
-  ggplot() +
-  geom_histogram(aes(x=Front.Person.Age), fill="blue", alpha=0.5, binwidth=0.9) +
-
-geom_vline(aes(xintercept = mean(Front.Person.Age, na.rm=TRUE)), color="red", linetype="dashed", size=1)
-
-labs(title="Distribtuion of Ages for Billboard Hot 100 Number One Artists", x="Front Person Age", y="Count")
-```
-- **What does it contain and what time period does it cover?**
-The Billboard Hot 100 Number Ones Database shows me each song that made it to number one on the Billboard Hot 100 list, along with the song name, it's artist, and the date released. The database further includes more statistics about each song, including categories about the amount of time it was #1, the demographic of the artist, genres/styles, and even instruments used. The dataset ranges from August 4th, 1958 to January 11, 2025. 
-
---**Which columns will be most important for your analysis?**
-The columns that will be most important to my analysis is the "Front Person Age." I'm looking to study whether the age of an artist and the time their songs went on number 1 are related. 
-
---**What's missing that you might need or want?**
-
---**Select a relevant column and produce basic descriptive statistics on the mean, median, lowest and highest values.**
 
 **Next, propose a newsworthy hypothesis (or several of them) for your dataset. You'll be looking to find (or eliminate possible story ideas) using the techniques you've learned in this class. You'll start that effort this week by coming up with some theories or questions that you're interested in exploring that can be answered with the dataset you selected.**
+Null Hypothesis: The race of a song's artist does not affect the popularity of their hit song
+Alternative Hypothesis: More than 50% of all time hit songs had Black artists 
+
+    General Alternative: The race of a song's artist directly affects the popularity of their hit song
+    More Specific Alternative: More than 50% of hit songs had White artists in the 20th century, but in 21st century, more than 50% of hit songs have Black artists (I don't know if I can do this one, I would need a lot of help)
+
+  Backup Option:
+    Null Hypothesis: The age of a song's artist does not affect the number of weeks their song is at #1
+    Alternative Hypothesis: Artists younger than 30 had a song that stayed at #1 for more than one week
 
 --**What questions do you have about it or need help answering?**
+1. To compare three categories, I should use an ANOVA test, correct?
+2. What table would work best to showcase how my three values interact with each other? (White, Black, # weeks)
 
-```{r}
-option command i 
-```
-
-
-Artist race does not affect the song popularity
-
-The race of the artist directly affects the populraity of their hit song more than 50% of the most popular songs were produced by black artists / whtie artists in the 50s and black artists in the 70s 
-
-Popularity = number of weeks at number 1 
-
-Percent that shows an association 
-
-more 
