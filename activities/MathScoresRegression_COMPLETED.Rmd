@@ -83,7 +83,7 @@ schools <- schools |>
 ```
 The schools with the biggest positive residuals are performing better than expected, while the schools with the biggest negative residuals are performing worse than expected, based on their FARMS percentage. Look at the absolute values of the residuals; what are the largest differences between the predicted result and the actual math scores?
 
-**The residual shows us how far off the prediction is from the actual value. The schools with large residual scores, negative and positive, have very different predicted score than what the actual score was. For example, Whitemarsh Elementary School was -45.83 points below what the actual score was. The same goes for Crooked Billet Elementary School, where it was predicted 30.18 points above what the actual score was. These two schools have the largest differences between the predicted result and the actual math score.**
+**The residual shows us how far off the prediction is from the actual value. The schools with large residual scores, negative and positive, have very different predicted score than what the actual score was. For example, Whitemarsh Elementary School was -34.9 points below what the actual score was. The same goes for Crooked Billet Elementary School, where it was predicted 31.1 points above what the actual score was. These two schools have the largest differences between the predicted result and the actual math score.**
 
 ## Task: Evaluate the model (3 points)
 
