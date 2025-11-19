@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(tidyverse)
 library(dplyr)
+library(janitor)
 ```
 
 ## Read CSV
@@ -92,7 +93,7 @@ Alternative Hypothesis: More than 50% of all time hit songs had Black artists
 1. To compare three categories, I should use an ANOVA test, correct?
 2. What table would work best to showcase how my three values interact with each other? (White, Black, # weeks)
 
-ASHLEY'S ANALYSIS 
+****ASHLEY'S ANALYSIS**** 
 
 --*Step 1*--
 I need to make a table with only black artists and the # of weeks their song was #1. I'm also adding the date for later calculation. I will then filter out the 0 values, so it only includes black artists. 
@@ -140,6 +141,6 @@ I need to filter each chart by year. I need one chart for before 2000, and one c
 
 ```{r}
 black_20th <- billboard_100 |> 
-  filter(Date < 31-Dec-00)
+  filter(Date < 
 ```
 
