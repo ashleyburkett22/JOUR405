@@ -92,3 +92,54 @@ Alternative Hypothesis: More than 50% of all time hit songs had Black artists
 1. To compare three categories, I should use an ANOVA test, correct?
 2. What table would work best to showcase how my three values interact with each other? (White, Black, # weeks)
 
+ASHLEY'S ANALYSIS 
+
+--*Step 1*--
+I need to make a table with only black artists and the # of weeks their song was #1. I'm also adding the date for later calculation. I will then filter out the 0 values, so it only includes black artists. 
+```{r}
+black_popularity <- billboard_100 |>
+  select(Artist.Black, Weeks.at.Number.One, Date)
+
+black_popularity <- black_popularity|>
+  filter(Artist.Black > 0)
+```
+
+I then need to find the mean # of weeks that a black artist's song was at #1. I also summed the total number of black artists on the list. 
+```{r}
+black_popularity |> summarise (
+  mean(Weeks.at.Number.One, na.rm=FALSE)
+)
+
+black_popularity |> summarise (
+  sum(Artist.Black, na.rm=TRUE)
+)
+```
+
+--*Step 2*--
+I need to make a table with only white artists and the # of weeks their song was #1. I'm also adding the date for later calculation. I will then filter out the 0 values, so it only includes white artists.  
+```{r}
+white_popularity <- billboard_100 |>
+  select(Artist.White, Weeks.at.Number.One, Date)
+
+white_popularity <- white_popularity |>
+  filter(Artist.White > 0)
+```
+
+I then need to find the mean # of weeks that a white artist's song was at #1. I also summed the total number of white artists on the list. 
+```{r}
+white_popularity |> summarise(
+  mean(Weeks.at.Number.One, na.rm=FALSE)
+  )
+
+white_popularity |> summarise(
+  sum(Artist.White, na.rm=TRUE)
+)
+```
+--*Step 3*--
+I need to filter each chart by year. I need one chart for before 2000, and one chart for after 2000. In these charts, I will once again find the mean # of weeks at #1. I will also do another count. **NEED HELP FILTERING BY DATE**
+
+```{r}
+black_20th <- billboard_100 |> 
+  filter(Date < 31-Dec-00)
+```
+
