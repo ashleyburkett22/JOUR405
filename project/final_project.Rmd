@@ -20,7 +20,11 @@ library(janitor)
 I read the data from the Billboard Hot 100 Number One database, from https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ZUiCK1XvEjknnn-tooSh4ay4DAOeP7oaJrNaRkAIoxz-C0Axvct7yoD3W-L3LJN-g6dZV6qIwv53/pub?gid=1077686609&single=true&output=csv"
 
 ```{r}
-billboard_100 <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ZUiCK1XvEjknnn-tooSh4ay4DAOeP7oaJrNaRkAIoxz-C0Axvct7yoD3W-L3LJN-g6dZV6qIwv53/pub?gid=1077686609&single=true&output=csv")
+billboard_100 <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQVR7XE8UGPh9EYKpSLzrNA0kXqcQo3AONREuc6mAAaHAu-8ia01STi_HrHgATfgJ5n9xUAUHPSl9ou/pub?gid=1077686609&single=true&output=csv") |> 
+clean_names() |> 
+mutate(date_new = dmy(date)) |> 
+mutate(date_new = if_else(year(date_new) > 2024,  date_new - years(100), date_new)) |> 
+select(date_new, everything())
 ```
 
 -- **What does it contain and what time period does it cover?**
@@ -47,26 +51,26 @@ There are many races that are missing from this database. The only artist races 
 ```{r}
 artist_black <- billboard_100 |>
   summarise(
-    mean=mean(Artist.Black, na.rm=TRUE),
-    median=median(Artist.Black, na.rm=TRUE),
-    min=min(Artist.Black, na.rm=TRUE),
-    max=max(Artist.Black, na.rm=TRUE)
+    mean=mean(artist_black, na.rm=TRUE),
+    median=median(artist_black, na.rm=TRUE),
+    min=min(artist_black, na.rm=TRUE),
+    max=max(artist_black, na.rm=TRUE)
   )
 
 artist_white <- billboard_100 |>
   summarise(
-    mean=mean(Artist.White, na.rm=TRUE),
-    median=median(Artist.White, na.rm=TRUE),
-    min=min(Artist.White, na.rm=TRUE),
-    max=max(Artist.White, na.rm=TRUE)
+    mean=mean(artist_white, na.rm=TRUE),
+    median=median(artist_white, na.rm=TRUE),
+    min=min(artist_white, na.rm=TRUE),
+    max=max(artist_white, na.rm=TRUE)
   )
 
 popularity <- billboard_100 |>
   summarise(
-    mean=mean(Weeks.at.Number.One, na.rm=TRUE),
-    median=median(Weeks.at.Number.One, na.rm=TRUE),
-    min=min(Weeks.at.Number.One, na.rm=TRUE),
-    max=max(Weeks.at.Number.One, na.rm=TRUE)
+    mean=mean(weeks_at_number_one, na.rm=TRUE),
+    median=median(weeks_at_number_one, na.rm=TRUE),
+    min=min(weeks_at_number_one, na.rm=TRUE),
+    max=max(weeks_at_number_one, na.rm=TRUE)
   )
 ```
 The table labeled artist_black depicts the average number of Black artists, showing that 47.4% of all #1 song artists in the database are Black. The middle value of the data set shown in "median" is 0, meaning that more than half of the artists are not Black. The number of Black artists is also ordered from least to greatest, and ranges from 0 to 2 per song. This means that some groups have no Black artists, but some also have up to two Black artists. 
@@ -83,7 +87,7 @@ Null Hypothesis: The race of a song's artist does not affect the popularity of t
 Alternative Hypothesis: More than 50% of all time hit songs had Black artists 
 
     General Alternative: The race of a song's artist directly affects the popularity of their hit song
-    More Specific Alternative: More than 50% of hit songs had White artists in the 20th century, but in 21st century, more than 50% of hit songs have Black artists (I don't know if I can do this one, I would need a lot of help)
+    More Specific Alternative: White artists had more popular #1 hits in the 20th century, but in 21st century, Black artists had more popular #1 hits.
 
   Backup Option:
     Null Hypothesis: The age of a song's artist does not affect the number of weeks their song is at #1
@@ -99,20 +103,20 @@ Alternative Hypothesis: More than 50% of all time hit songs had Black artists
 I need to make a table with only black artists and the # of weeks their song was #1. I'm also adding the date for later calculation. I will then filter out the 0 values, so it only includes black artists. 
 ```{r}
 black_popularity <- billboard_100 |>
-  select(Artist.Black, Weeks.at.Number.One, Date)
+  select(artist_black, weeks_at_number_one, date_new)
 
 black_popularity <- black_popularity|>
-  filter(Artist.Black > 0)
+  filter(artist_black > 0)
 ```
 
 I then need to find the mean # of weeks that a black artist's song was at #1. I also summed the total number of black artists on the list. 
 ```{r}
 black_popularity |> summarise (
-  mean(Weeks.at.Number.One, na.rm=FALSE)
+  mean(weeks_at_number_one, na.rm=FALSE)
 )
 
 black_popularity |> summarise (
-  sum(Artist.Black, na.rm=TRUE)
+  sum(artist_black, na.rm=TRUE)
 )
 ```
 
@@ -120,27 +124,196 @@ black_popularity |> summarise (
 I need to make a table with only white artists and the # of weeks their song was #1. I'm also adding the date for later calculation. I will then filter out the 0 values, so it only includes white artists.  
 ```{r}
 white_popularity <- billboard_100 |>
-  select(Artist.White, Weeks.at.Number.One, Date)
+  select(artist_white, weeks_at_number_one, date_new)
 
 white_popularity <- white_popularity |>
-  filter(Artist.White > 0)
+  filter(artist_white > 0)
 ```
 
 I then need to find the mean # of weeks that a white artist's song was at #1. I also summed the total number of white artists on the list. 
 ```{r}
 white_popularity |> summarise(
-  mean(Weeks.at.Number.One, na.rm=FALSE)
+  mean(weeks_at_number_one, na.rm=FALSE)
   )
 
 white_popularity |> summarise(
-  sum(Artist.White, na.rm=TRUE)
+  sum(artist_white, na.rm=TRUE)
 )
 ```
 --*Step 3*--
-I need to filter each chart by year. I need one chart for before 2000, and one chart for after 2000. In these charts, I will once again find the mean # of weeks at #1. I will also do another count. **NEED HELP FILTERING BY DATE**
+I need to filter each chart by year for black artists. I need one chart for before 2000, and one chart for after 2000. In these charts, I will once again find the mean # of weeks at #1. I will also do another count.
 
 ```{r}
-black_20th <- billboard_100 |> 
-  filter(Date < 
+black_20th <- black_popularity |>
+  filter(date_new < ("2000-01-01"))
+
+black_21st <- black_popularity |>
+  filter(date_new >= ("2000-01-01"))
 ```
 
+I will once again find the mean # of weeks at #1. I will also do another count.
+
+```{r}
+black_20th |>
+  summarise(
+    mean=mean(weeks_at_number_one)
+  )
+
+black_21st |>
+  summarise(
+    mean=mean(weeks_at_number_one)
+  )
+
+black_20th |> 
+  summarise(
+  sum(artist_black)
+)
+
+black_21st |> 
+  summarise(
+  sum(artist_black)
+)
+```
+I need to filter each chart by year for white artists. I need one chart for before 2000, and one chart for after 2000. In these charts, I will once again find the mean # of weeks at #1. I will also do another count.
+```{r}
+white_20th <- white_popularity |>
+  filter(date_new < ("2000-01-01"))
+
+white_21st <- white_popularity |>
+  filter(date_new >= ("2000-01-01"))
+```
+
+I will once again find the mean # of weeks at #1. I will also do another count.
+```{r}
+white_20th |>
+  summarise(
+    mean=mean(weeks_at_number_one)
+  )
+
+white_21st |>
+  summarise(
+    mean=mean(weeks_at_number_one)
+  )
+
+white_20th |> 
+  summarise(
+  sum(artist_white)
+)
+
+white_21st |> 
+  summarise(
+  sum(artist_white)
+)
+```
+--*Step 4*--
+I'm pausing to recap the data that I just calculated. In quick summary: 
+
+Avg weeks BLACK ARTIST at #1 in 20th century: 2.755853
+Avg weeks WHITE ARTIST at #1 in 20th century: 2.438567	
+
+Avg weeks BLACK ARTIST at #1 in 21st century: 4.256944	
+Avg weeks WHITE ARTIST at #1 in 21st century: 3.929032		
+
+Number of BLACK artists that were at #1 in the 20th century: 350
+Number of WHITE artists that were at #1 in the 20th century: 641
+
+Number of BLACK artists that were at #1 in the 21st century: 178
+Number of WHITE artists that were at #1 in the 21st century: 203
+
+Based on these numbers, there were more white artists that were at #1 in the 20th century, but black artists were more popular, because their average number of weeks at #1 is higher. The same trend is present in the 21st century, where there's m ore white artists than black artists at #1, but the black artists had more popularity. (This is NOT my conclusion paragraph, this is a quick summary to move forward.)
+
+--*Step 5*--
+I will now visualize my findings. I will be showing the popularity of white artists vs black artists in the 20th century, and 21st century in a stacked bar chart. To do this, I need to make a data set that combines all of the information that I found above.
+
+
+**I used AI to help formulate this large data set. All it did was combine all of the information that I found above on my own, into one chart, so I could use it for my tests. I wanted to make sure I could find the data on my own prior to using AI for assistance. In this case, it helped me move forward with my project. It took lots of questions to be able to get to the most accurate data set.**
+
+https://chatgpt.com/c/692619ff-b9f8-8326-bd48-434e6d639297
+
+
+```{r}
+summary_chart <- tibble(
+race = c("Black", "White", "Black", "White"),
+era = c("20th Century", "20th Century", "21st Century", "21st Century"),
+mean_weeks_at_1 = c(2.755853, 2.438567, 4.256944, 3.929032),
+total_artists = c(350, 641, 178, 203)
+)
+```
+
+My chart. 
+
+```{r}
+ggplot(summary_chart, aes(x = era, y = mean_weeks_at_1, fill = race)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Mean Weeks at #1 by Artist Race and Time Period",
+    x = "Time Period",
+    y = "Mean Weeks at #1",
+    fill = "Race"
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = c("Black" = "Blue", "White" = "Red"))
+```
+
+--*Step 6*--
+I will run a T-Test and an ANOVA. To do these tests I will combine my data into one chart. **Figured out "case_when" with the help of the internet. It showed me how to group columns in certain cases, when the data is changing.**
+
+```{r}
+billboard_race <- billboard_100 |>
+  select(artist_white, artist_black, weeks_at_number_one, date_new) |>
+  filter(weeks_at_number_one > 0) |>      
+  
+  mutate(
+    race_group = case_when(
+      artist_black > 0 & artist_white == 0 ~ "Black",
+      artist_white > 0 & artist_black == 0 ~ "White",
+    ),
+    
+    year_group = case_when(
+      date_new < ("1999-12-31") ~ "Before",
+      date_new > ("1999-12-31") ~ "After"
+    )
+  )
+```
+
+Now I can run my T-Test. I decided to run two different tests; one for before 2000 and one for after 2000. 
+```{r}
+t_test_before <- t.test(
+  weeks_at_number_one ~ race_group, data = filter(billboard_race, year_group == "Before")
+)
+
+t_test_before
+```
+
+
+```{r}
+t_test_after <- t.test(
+  weeks_at_number_one ~ race_group, data = filter(billboard_race, year_group == "After")
+)
+
+t_test_after
+```
+I will run my ANOVA now to see if there's significance between the weeks at #1 and the race group.
+
+```{r}
+anova_result <- aov(weeks_at_number_one ~ race_group, data = billboard_race)
+summary(anova_result)
+```
+--*Step 7*--
+Conclusion
+
+After displaying a chart, running t-tests, and an ANOVA, my data regarding whether Black or white artists were more popular during the 20th or 21st century is somewhat statistically significant, but fails to show full significance in some areas. 
+
+My initial data showed that the average number of weeks a Black artist was at #1 in the 20th century was 2.8, while a white artist's average is just 2.4 weeks. Despite the Black artists showing more popularity in hit songs, there were 641 white artists that made a #1 hit in the 20th century, as compared with just 350 black artists. The same trend continued into the 21st century. Black artists had a higher popularity with their hit songs, as they stayed at #1 for an average of 4.3 weeks in the 21st century, and just 3.9 weeks for white artists. Like the 20th century, there were also more white artists with hit songs, as there were 203 white artists and 178 Black artists. 
+
+My stacked bar chart depicts the information about the mean number of weeks at #1, otherwise interpreted as the popularity of an artist. There was a higher average number of weeks with a song at #1 for Black artists than for white artists, in both the 20th and 21st centuries. 
+
+I ran two T-Tests to confirm the relationship between an artist's race and the number of weeks their song was at #1. My first test explored the time period before 2000. It resulted in a P value of 0.04895, which is below 0.05. This means that the relationship between the race of an artist and the number of weeks their song was at #1, before 2000, is statistically significant. However, on the following T-Test that covered the period after 2000, my P value was 0.1631. I cannot reject my null hypothesis, and my data here is considered not statistically significant. 
+
+My ANOVA calculated the relationship between race and the number of weeks at #1. The P-value from this test was 0.000202, which is below 0.05. The value is also marked by three stars (***) signaling its extreme statistical significance. Though this did not cover the 20th v. 21st centuries, it allows me to explore a generalized relationship between race and popularity. Meanwhile, my T-Tests represent the more in-depth relationship, involving a time period. 
+
+Overall, race is significantly related to popularity of a song, as measured by the number of weeks a song is #1, according to the ANOVA. However, when measuring popularity before v. after 2000, we cannot conclude significance, as the T-Test showed a lack of statistical significance.
+
+ORIGINAL HYPOTHESIS: 
+Null Hypothesis: The race of a song's artist does not affect the popularity of their hit song
+Alternative Hypothesis: White artists had more popular #1 hits in the 20th century, but in 21st century, Black artists had more popular #1 hits. 
