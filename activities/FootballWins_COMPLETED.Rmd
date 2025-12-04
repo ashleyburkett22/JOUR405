@@ -1,0 +1,92 @@
+
+---
+title: "Multiple Regression Analysis in R"
+date: 8-24-2025
+---
+
+# Introduction
+
+Multiple regression analysis is a statistical method used to understand the relationship between one dependent variable and two or more independent variables. This analysis is particularly useful in journalism for exploring complex relationships, such as how different factors collectively impact outcomes like election results, economic indicators, or sports performances. By understanding these relationships, journalists can provide deeper insights and more accurate predictions.
+
+```{r setup}
+library(tidyverse)
+#install.packages('corrplot')
+library(corrplot)
+```
+
+## Data Import
+
+The first step in our analysis is to load the data. Here we read the data from a CSV file, which contains various statistics for NFL teams from the 2019 season. This dataset will be used to build our model.
+
+```{r}
+teams <- read_csv("https://raw.githubusercontent.com/dwillis/jour405_files/main/nfl_2019.csv")
+```
+
+## Model Building
+
+Next, we construct a linear model to analyze how different factors like `Yards Gained`, `Takeaways`, and `Points Scored` influence the number of wins. This model helps us quantify the relationships and assess which factors are significant predictors of success.
+
+```{r}
+model <- lm(Wins ~ `Yards Gained` + Takeaways + `Points Scored`, data = teams)
+summary(model)
+```
+
+### Residuals
+
+The residuals of a model are the differences between observed values and the values predicted by the model. For your model:
+
+*   **Min and Max** values indicate the range of residuals. A maximum of 4.1361 and a minimum of -4.3780 suggest that there might be some substantial errors in predictions for some cases, but generally, the errors are relatively evenly distributed around zero.
+*   **Median** close to zero (-0.0604) indicates that the model is generally centered around the actual data points, but still, some deviations exist.
+
+### Coefficients
+
+The coefficients tell us the estimated effect of each independent variable on the dependent variable:
+
+*   **Yards Gained**: The coefficient is -0.001329. This suggests a very small negative impact of yards gained on wins, but this effect is not statistically significant (p = 0.34332), implying that as yards gained increase, the number of wins slightly decreases, which is counterintuitive and likely indicates no real effect or that the model isn't capturing the complexities.
+*   **Takeaways**: The coefficient is 0.150593, suggesting that each additional takeaway is associated with an increase in wins by about 0.151, which is near the threshold of significance (p = 0.07928). This suggests a potentially meaningful, though not conventionally statistically significant, positive effect on wins.
+*   **Points Scored**: The coefficient is 0.038732, which is significant (p = 0.00665). This indicates that each additional point scored is associated with an increase in wins by about 0.039, suggesting a clear and meaningful impact.
+
+### Model Fit
+
+*   **Residual Standard Error**: The RSE of 2.072 tells us that the typical prediction by the model deviates from the actual number of wins by about 2.072 wins.
+*   **Multiple R-squared**: 0.6232 indicates that about 62.32% of the variability in wins is explained by the model, which is relatively high, suggesting a good fit.
+*   **Adjusted R-squared**: 0.5828 adjusts the R-squared for the number of predictors and indicates that about 58.28% of the variance is explained by the model after accounting for the number of variables used.
+*   **F-statistic**: The F-statistic of 15.44 with a very low p-value (4.058e-06) suggests the model as a whole is statistically significant.
+
+Is this a useful model, based on what you've seen? Why?
+
+*This is a useful model, but it has more accurate aspects than others. The model explains over half of the variability in wins, with 62.32%. This suggests a good fit. The F-statistic is 15.44 with a very low p-value of 4.058e-06, also showing evidence of statistical significance. However, there are some aspects that should be noted about the accuracy of the chart. "Points scored" is the only category denoted by stars (**), signaling significance. Intercept, yards gained, and takewaways all don't have statistical significance, according to the model.*
+
+## Correlation Analysis
+
+After building the model, we calculate the correlation matrix for our variables of interest. This matrix helps visualize the strength and direction of the relationships between each pair of variables.
+
+```{r}
+selected_vars <- teams |>  select(`Yards Gained`, Takeaways, `Points Scored`, Wins)
+cor(selected_vars)
+```
+
+## Visualization of Correlation Matrix
+
+Finally, we use a visualization tool to plot the correlation matrix. This graphical representation makes it easier to interpret the correlations at a glance, showing which variables are most closely connected.
+
+```{r}
+corr_matrix <- cor(selected_vars)
+corrplot(corr_matrix, method = "circle")
+```
+
+## Results Interpretation
+
+The results from our correlation analysis show the strength of the relationships between the number of wins and factors like yards gained, takeaways, and points scored. High positive correlations indicate strong relationships where increases in one variable are associated with increases in another. Conversely, negative correlations suggest an inverse relationship. By understanding these dynamics, journalists can better explain the factors that contribute to a team's success or failure in a season.
+
+Which of these three factors - Yards Gained, Takeaways and Points Scored - have the most impact on wins? Are there any that do not seem impactful at all?
+
+*The factor that has the most impact on wins is points scored. This category has a correlation of 0.7078293, which is higher than takeaways (0.5704108) and yards gained (0.4430188). The visualization also shows that points scored had three large, dark blue, circles. This is the most circles, and the largest circles, out of any of the other categories. The chart shows further impact on wins. These factors, when compared against each other, show that "points scores" has the most impact on wins.*
+
+*A category that doesn't have much impact is yards gained. This category has a correlation of 0.4430188, which is the lowest of the three. This signals that it doesn't have much of an impact on wins. On the chart, takeaways appear to have less impact. There are smaller and lighter circles, and one missing, in this category*
+
+## Using the Model
+
+Without using the words "multiple regression model", describe how you could use this model to cover a team or game.
+
+*I would use a model to show a multiple regression model in simpler terms. The chart which depicts the correlation matrix is easily understood based on how close a number is to #1. A simple bar chart, representing the model, would help viewers understand the multiple regression model. I would also present the data as "statistical measures from various teams, games, and parts of plays, resulted in these numbers, which can be compared against each other." The bars could change in height throughout the season as teams are affected by takeovers and yards gained, in comparison to their performance.*
