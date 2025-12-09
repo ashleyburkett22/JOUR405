@@ -1,0 +1,368 @@
+---
+title: "Final_Billboard100"
+output: final_project
+date: "2025-11-05"
+author: "Ashley Burkett"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(janitor)
+```
+
+## Read CSV
+
+I read the data from the Billboard Hot 100 Number One database, from https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ZUiCK1XvEjknnn-tooSh4ay4DAOeP7oaJrNaRkAIoxz-C0Axvct7yoD3W-L3LJN-g6dZV6qIwv53/pub?gid=1077686609&single=true&output=csv"
+
+```{r}
+billboard_100 <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQVR7XE8UGPh9EYKpSLzrNA0kXqcQo3AONREuc6mAAaHAu-8ia01STi_HrHgATfgJ5n9xUAUHPSl9ou/pub?gid=1077686609&single=true&output=csv") |> 
+clean_names() |> 
+mutate(date_new = dmy(date)) |> 
+mutate(date_new = if_else(year(date_new) > 2024,  date_new - years(100), date_new)) |> 
+select(date_new, everything())
+```
+
+-- **What does it contain and what time period does it cover?**
+The Billboard Hot 100 Number Ones Database shows me each song that made it to number one on the list, along with the song name, its artist, and the date released. The database further includes more statistics about each song, the artist/industry, and the measure of popularity.
+
+The song-related columns introduce the genre categories, which include Rock, Pop, Funk/Soul, Country, Reggae, Folk, and Blues, among other categories. The details go further into the specific instruments that are used in the hit song, going as far as including 21 instruments. The musical base, lyrics, and song length are also all illustrated in the database. 
+
+The artist and industry portion goes into who made the song and how it was put out. The artist category has specifics about the person, such as age, race, gender, their place of origin, and even if they were a talent contestant. The producer section has similar characteristics, including their name, gender, race, and other positions they may hold. There is also a songwriter category, which depicts who actually created the song, rather than singing or distributing it.  
+
+The popularity of each song is measured throughout different categories in the database. The number of weeks at #1, and how many weeks it was a consecutive hit shows a level of popularity among listeners. There is also a section with three individual ratings and an overall song rating. The divisiveness column goes the extra step to represent how much agreement or disagreement surrounds the song's rating. 
+
+Miscellaneous categories that add to the detail of this database include subjects such as what the song was written for, danceability, lyrical topic, loudness, and song inspiration.  All of these columns combined make for an extremely detailed database where all information about a top hit can be deciphered. 
+
+
+--**Which columns will be most important for your analysis?**
+The columns that will be most important to my analysis are the artist's race, which is depicted in the sections titled "Artist White" and "Artist Black." I will also need to measure the popularity of the song, which will be deciphered from "Weeks at Number One." Other columns that show popularity are ratings 1, 2, and 3, along with the overall rating and divisiveness. I chose to use the weeks at #1 because it shows the audience's attention to the song, and represents a popularity beyond professional music ratings. 
+
+
+--**What's missing that you might need or want?**
+There are many races that are missing from this database. The only artist races that are noted are "White" and "Black," however, there are many other categories that the artists could fit in. For a full diversity analysis, I would need Asian, Native, Hispanic/Non-Hispanic, NHPI, and "other." Something that's also missing is a general popularity rating. To curb this, I'm using the number of weeks the song was rated #1 as a depiction for popularity. 
+
+--**Select a relevant column and produce basic descriptive statistics on the mean, median, lowest and highest values.**
+
+```{r}
+artist_black <- billboard_100 |>
+  summarise(
+    mean=mean(artist_black, na.rm=TRUE),
+    median=median(artist_black, na.rm=TRUE),
+    min=min(artist_black, na.rm=TRUE),
+    max=max(artist_black, na.rm=TRUE)
+  )
+
+artist_white <- billboard_100 |>
+  summarise(
+    mean=mean(artist_white, na.rm=TRUE),
+    median=median(artist_white, na.rm=TRUE),
+    min=min(artist_white, na.rm=TRUE),
+    max=max(artist_white, na.rm=TRUE)
+  )
+
+popularity <- billboard_100 |>
+  summarise(
+    mean=mean(weeks_at_number_one, na.rm=TRUE),
+    median=median(weeks_at_number_one, na.rm=TRUE),
+    min=min(weeks_at_number_one, na.rm=TRUE),
+    max=max(weeks_at_number_one, na.rm=TRUE)
+  )
+```
+The table labeled artist_black depicts the average number of Black artists, showing that 47.4% of all #1 song artists in the database are Black. The middle value of the data set shown in "median" is 0, meaning that more than half of the artists are not Black. The number of Black artists is also ordered from least to greatest, and ranges from 0 to 2 per song. This means that some groups have no Black artists, but some also have up to two Black artists. 
+
+The artist_white table shows that 71.7% of all #1 songs in the database were by White artists, which also translates to 7 out of 10 Billboard hits. The median is 1, which means that more than half of the songs were created by a White artist, as opposed to 0 in the artist_black chart. Another comparison is in the minimum and maximum, as the lowest and highest numbers of White artists for a song is 0 and 2. 
+
+To measure popularity, I analyzed the column titled "Weeks at Number One." This chart shows that about three weeks is average amount of time to stay a #1 hit. The median is 2, meaning that over half of the songs sat at #1 for at least two weeks. The minimum number of weeks to be considered a #1 hit is 1, which is depicted by the minimum in the database as well. The maximum number of weeks that a song was a #1 hit is a whopping 19 weeks. 
+
+Altogether, these charts show that there are more White artists than Black artists who have #1 hits. With further data analysis, I will be able to tell if more Black artists or White artists have hit songs that stay at #1, which translates to a measure of popularity. 
+
+
+**Next, propose a newsworthy hypothesis (or several of them) for your dataset. You'll be looking to find (or eliminate possible story ideas) using the techniques you've learned in this class. You'll start that effort this week by coming up with some theories or questions that you're interested in exploring that can be answered with the dataset you selected.**
+Null Hypothesis: The race of a song's artist does not affect the popularity of their hit song
+Alternative Hypothesis: More than 50% of all time hit songs had Black artists 
+
+    General Alternative: The race of a song's artist directly affects the popularity of their hit song
+    More Specific Alternative: White artists had more popular #1 hits in the 20th century, but in 21st century, Black artists had more popular #1 hits.
+
+  Backup Option:
+    Null Hypothesis: The age of a song's artist does not affect the number of weeks their song is at #1
+    Alternative Hypothesis: Artists younger than 30 had a song that stayed at #1 for more than one week
+
+--**What questions do you have about it or need help answering?**
+1. To compare three categories, I should use an ANOVA test, correct?
+2. What table would work best to showcase how my three values interact with each other? (White, Black, # weeks)
+
+****ASHLEY'S ANALYSIS**** 
+
+--*Step 1*--
+I need to make a table with only black artists and the # of weeks their song was #1. I'm also adding the date for later calculation. I will then filter out the 0 values, so it only includes black artists. 
+```{r}
+black_popularity <- billboard_100 |>
+  select(artist_black, weeks_at_number_one, date_new)
+
+black_popularity <- black_popularity|>
+  filter(artist_black > 0)
+```
+
+I then need to find the mean # of weeks that a black artist's song was at #1. I also summed the total number of black artists on the list. 
+```{r}
+black_popularity |> summarise (
+  mean(weeks_at_number_one, na.rm=FALSE)
+)
+
+black_popularity |> summarise (
+  sum(artist_black, na.rm=TRUE)
+)
+```
+
+--*Step 2*--
+I need to make a table with only white artists and the # of weeks their song was #1. I'm also adding the date for later calculation. I will then filter out the 0 values, so it only includes white artists.  
+```{r}
+white_popularity <- billboard_100 |>
+  select(artist_white, weeks_at_number_one, date_new)
+
+white_popularity <- white_popularity |>
+  filter(artist_white > 0)
+```
+
+I then need to find the mean # of weeks that a white artist's song was at #1. I also summed the total number of white artists on the list. 
+```{r}
+white_popularity |> summarise(
+  mean(weeks_at_number_one, na.rm=FALSE)
+  )
+
+white_popularity |> summarise(
+  sum(artist_white, na.rm=TRUE)
+)
+```
+--*Step 3*--
+I need to filter each chart by year for black artists. I need one chart for before 2000, and one chart for after 2000. In these charts, I will once again find the mean # of weeks at #1. I will also do another count.
+
+```{r}
+black_20th <- black_popularity |>
+  filter(date_new < ("2000-01-01"))
+
+black_21st <- black_popularity |>
+  filter(date_new >= ("2000-01-01"))
+```
+
+I will once again find the mean # of weeks at #1. I will also do another count.
+
+```{r}
+black_20th |>
+  summarise(
+    mean=mean(weeks_at_number_one)
+  )
+
+black_21st |>
+  summarise(
+    mean=mean(weeks_at_number_one)
+  )
+
+black_20th |> 
+  summarise(
+  sum(artist_black)
+)
+
+black_21st |> 
+  summarise(
+  sum(artist_black)
+)
+```
+I need to filter each chart by year for white artists. I need one chart for before 2000, and one chart for after 2000. In these charts, I will once again find the mean # of weeks at #1. I will also do another count.
+```{r}
+white_20th <- white_popularity |>
+  filter(date_new < ("2000-01-01"))
+
+white_21st <- white_popularity |>
+  filter(date_new >= ("2000-01-01"))
+```
+
+I will once again find the mean # of weeks at #1. I will also do another count.
+```{r}
+white_20th |>
+  summarise(
+    mean=mean(weeks_at_number_one)
+  )
+
+white_21st |>
+  summarise(
+    mean=mean(weeks_at_number_one)
+  )
+
+white_20th |> 
+  summarise(
+  sum(artist_white)
+)
+
+white_21st |> 
+  summarise(
+  sum(artist_white)
+)
+```
+--*Step 4*--
+I'm pausing to recap the data that I just calculated. In quick summary: 
+
+Avg weeks BLACK ARTIST at #1 in 20th century: 2.755853
+Avg weeks WHITE ARTIST at #1 in 20th century: 2.438567	
+
+Avg weeks BLACK ARTIST at #1 in 21st century: 4.256944	
+Avg weeks WHITE ARTIST at #1 in 21st century: 3.929032		
+
+Number of BLACK artists that were at #1 in the 20th century: 350
+Number of WHITE artists that were at #1 in the 20th century: 641
+
+Number of BLACK artists that were at #1 in the 21st century: 178
+Number of WHITE artists that were at #1 in the 21st century: 203
+
+Based on these numbers, there were more white artists that were at #1 in the 20th century, but black artists were more popular, because their average number of weeks at #1 is higher. The same trend is present in the 21st century, where there are more white artists than black artists at #1, but the black artists had more popularity. (This is NOT my conclusion paragraph, this is a quick summary to move forward.)
+
+--*Step 5*--
+I will now visualize my findings. I will be showing the popularity of white artists vs black artists in the 20th century, and 21st century in a stacked bar chart. To do this, I need to make a data set that combines all of the information that I found above.
+
+
+**I used AI to help formulate this large data set. All it did was combine all of the information that I found above on my own, into one chart, so I could use it for my tests. I wanted to make sure I could find the data on my own prior to using AI for assistance. In this case, it helped me move forward with my project. It took lots of questions to be able to get to the most accurate data set.**
+
+https://chatgpt.com/c/692619ff-b9f8-8326-bd48-434e6d639297
+
+
+```{r}
+summary_chart <- tibble(
+race = c("Black", "White", "Black", "White"),
+era = c("20th Century", "20th Century", "21st Century", "21st Century"),
+mean_weeks_at_1 = c(2.755853, 2.438567, 4.256944, 3.929032),
+total_artists = c(350, 641, 178, 203)
+)
+```
+
+Below is the calculation to my visualization, utilizing the summary chart above. 
+
+```{r}
+ggplot(summary_chart, aes(x = era, y = mean_weeks_at_1, fill = race)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Mean Weeks at #1 by Artist Race and Time Period",
+    x = "Time Period",
+    y = "Mean Weeks at #1",
+    fill = "Race"
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = c("Black" = "Blue", "White" = "Red"))
+```
+
+--*Step 6*--
+I will run a T-Test and an ANOVA. To do these tests I will combine my data into one chart. **Figured out "case_when" with the help of the internet. It showed me how to group columns in certain cases, when the data is changing.**
+
+```{r}
+billboard_race <- billboard_100 |>
+  select(artist_white, artist_black, weeks_at_number_one, date_new) |>
+  filter(weeks_at_number_one > 0) |>      
+  
+  mutate(
+    race_group = case_when(
+      artist_black > 0 & artist_white == 0 ~ "Black",
+      artist_white > 0 & artist_black == 0 ~ "White",
+    ),
+    
+    year_group = case_when(
+      date_new < ("1999-12-31") ~ "Before",
+      date_new > ("1999-12-31") ~ "After"
+    )
+  )
+```
+
+Now I can run my T-Test. I decided to run two different tests; one for before 2000 and one for after 2000. 
+```{r}
+t_test_before <- t.test(
+  weeks_at_number_one ~ race_group, data = filter(billboard_race, year_group == "Before")
+)
+
+t_test_before
+```
+
+
+```{r}
+t_test_after <- t.test(
+  weeks_at_number_one ~ race_group, data = filter(billboard_race, year_group == "After")
+)
+
+t_test_after
+```
+I will run my ANOVA now to see if there's significance between the weeks at #1 and the race group.
+
+```{r}
+anova_result <- aov(weeks_at_number_one ~ race_group, data = billboard_race)
+summary(anova_result)
+```
+--*Step 7*--
+Conclusion
+
+After displaying a chart, running t-tests, and an ANOVA, my data regarding whether Black or white artists were more popular during the 20th or 21st century is somewhat statistically significant, but fails to show full significance in some areas. 
+
+My initial data showed that the average number of weeks a Black artist was at #1 in the 20th century was 2.8, while a white artist's average is just 2.4 weeks. Despite the Black artists showing more popularity in hit songs, there were 641 white artists that made a #1 hit in the 20th century, as compared with just 350 black artists. The same trend continued into the 21st century. Black artists had a higher popularity with their hit songs, as they stayed at #1 for an average of 4.3 weeks in the 21st century, and just 3.9 weeks for white artists. Like the 20th century, there were also more white artists with hit songs, as there were 203 white artists and 178 Black artists. 
+
+My stacked bar chart depicts the information about the mean number of weeks at #1, otherwise interpreted as the popularity of an artist. There was a higher average number of weeks with a song at #1 for Black artists than for white artists, in both the 20th and 21st centuries. 
+
+I ran two T-Tests to confirm the relationship between an artist's race and the number of weeks their song was at #1. My first test explored the time period before 2000. It resulted in a P value of 0.04895, which is below 0.05. This means that the relationship between the race of an artist and the number of weeks their song was at #1, before 2000, is statistically significant. However, on the following T-Test that covered the period after 2000, my P value was 0.1631. I cannot reject my null hypothesis, and my data here is considered not statistically significant. 
+
+My ANOVA calculated the relationship between race and the number of weeks at #1. The P-value from this test was 0.000202, which is below 0.05. The value is also marked by three stars (***) signaling its extreme statistical significance. Though this did not cover the 20th v. 21st centuries, it allows me to explore a generalized relationship between race and popularity. Meanwhile, my T-Tests represent the more in-depth relationship, involving a time period. 
+
+Overall, race is significantly related to popularity of a song, as measured by the number of weeks a song is #1, according to the ANOVA. However, when measuring popularity before v. after 2000, we cannot conclude significance, as the T-Test showed a lack of statistical significance.
+
+ORIGINAL HYPOTHESIS: 
+Null Hypothesis: The race of a song's artist does not affect the popularity of their hit song
+Alternative Hypothesis: White artists had more popular #1 hits in the 20th century, but in 21st century, Black artists had more popular #1 hits. 
+
+--*Step 8*--
+Story Pitch and Analysis 
+
+HEADLINE: Black Artists Have More Popular Music, but White Artists Still Dominate the Hit Charts, Data Shows 
+
+PITCH: Data analysis of the Billboard Hot 100 Number Ones Database shows that there's a strong relationship between the popularity of a song and the race of the artist. Black artists on average, had more popular songs that stayed at #1 for more weeks than white artists. Despite black artists having more popular songs, the data shows that white artists dominated the charts. There were hundreds more white artists with hit songs in the database than black artists. The difference in popularity v. who dominates the billboard suggests a trend behind the scenes in the music industry, and brings up the question of “why” there’s such a difference between these two groups. 
+
+ANALYSIS: 
+
+    FINDINGS: By deciphering the chart, I was able to find that Black artists had more popular songs than White artists. I measured this by calculating the average number of weeks each race's song was at number one. Black artists in total had an average number of 3.24 weeks at number one. White artists had an average of 2.75 weeks at number one. Alongside the difference in weeks comes the difference in the number of artists from each race. Black artists accounted for 528 spots on the entire Billboard Hot 100 Number Ones Database, while White artists took up 844 spots. An analysis of variance test showed that there was high statistical significance between the number of weeks an artist was at #1, and the race of an artist. The p-value resulting from this test was 0.000202; way below the threshold of 0.05. This value is also denoted by three asterisks (***), showing that the probability of this data happening by random chance is less than 0.1%. The relationship between race and popularity is extremely significant.
+    
+    The difference in popularity by century was also tested. The average number of weeks that a song was at #1 for a Black artist and White artist in the 20th and 21st centuries was deciphered. The sum of artists from these time periods was also taken. A T-Test was used to determine if this data was related, but the results showed little to no statistical significance. The question about whether White or Black artists were more popular in the 20th or 21st century could not be determined. 
+    
+    POTENTIAL PROBLEMS: A potential problem that my story could encounter would be that additional races were not considered on this billboard list, other than "Black" and "White." This chart excludes Asian, Hispanic, Indigenous, Pacific Islander, and mixed races. It raises the question of whether no other races made the list, or were these races incorrectly grouped in with "Black" and "White" artists?
+    
+    
+    REPORTING PLAN: The reporting plan consists of talking to the creator of the Billboard Hot 100 Number Ones Database, Chris Dalla Riva. I will ask him the primary question about why they think Black artists tend to be more popular, but white artists continue to dominate the board. Other questions I could ask the creator is how he grouped the differing races, and his opinion on including other races in the database. 
+    Music journalists and data journalists are other categories that I would include in my story. The Billboard Hot 100 list isn't determined by a person, but rather data from each song. The database uses sales, radio play, and streaming data to determine who gets to the top of their list each week. A data journalist could tell me more about how the data pieces are found and analyzed for publication. A music journalist could tell me more about trends throughout the 20th and 21st centuries regarding the races of artists. Questions about data analysis and information gathering for the database could be gathered from these groups. 
+    Artists on the list and their producers would also be valuable sources for this story. They could discuss their opinions on the difference between the number of Black v. White artists on the chart. Producers and artists could also provide information on if they see or experience any barriers between artists of different races that may happen behind the scenes, but isn't displayed through the database. Any questions about personal experience within the industry would be important here.
+    Following my interviews, this story could be effectively shown through visualizations and interactive elements. Bar charts, pie charts, and various other depictions of the number of Black v. White artists can help to tell the story in a more effective way than just stating the numbers. Interactive elements could include parts of the story where you click to hear various songs that were at #1 for the most weeks, or see the profile of an artist who has shared personal experiences in the music industry. This individualized element can put a face to a number, and make the story more emotionally appealing.
+    To conclude, my reporting plan consists of several interviews with the creator of the database, music journalists, data journalists, along with featured artists and producers. I will ask questions that better help to understand how the data was gathered, analyzed, and if any barriers in the industry exist and affect the numbers. My interactive and visual reporting techniques will also help to convey this data story effectively, so that it can be well understood and reaches an emotional appeal. 
+
+
+*ALL ANALYSIS TAKEN*
+MEAN WEEKS AT #1 BLACK ARTIST: 3.243792	
+MEAN WEEKS AT #1 WHITE ARTIST: 2.750337	
+
+TOTAL SUM OF BLACK ARTISTS: 528	
+TOTAL SUM OF WHITE ARTISTS: 844	
+
+ANOVA for ALL TIME popularity/race relationship: P-value 0.000202
+
+Avg weeks BLACK ARTIST at #1 in 20th century: 2.755853
+Avg weeks WHITE ARTIST at #1 in 20th century: 2.438567	
+
+Avg weeks BLACK ARTIST at #1 in 21st century: 4.256944	
+Avg weeks WHITE ARTIST at #1 in 21st century: 3.929032		
+
+Number of BLACK artists that were at #1 in the 20th century: 350
+Number of WHITE artists that were at #1 in the 20th century: 641
+
+Number of BLACK artists that were at #1 in the 21st century: 178
+Number of WHITE artists that were at #1 in the 21st century: 203
+
+T-Test for 20TH century: P-value = 0.04895
+T-Test for 21ST Century: P-value = 0.1631
+
+
